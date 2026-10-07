@@ -131,7 +131,7 @@ export default function App() {
       // Small delay for dramatic reveal before showing final result
       setTimeout(() => {
         setGameStatus('RESULT');
-      }, 700);
+      }, 1800);
     }
   };
 

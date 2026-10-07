@@ -195,7 +195,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({
             {cards.map((c, idx) => {
               const borderCol =
                 c.rarity === 'EPIC'
-                  ? 'border-pink-500 text-pink-300'
+                  ? 'border-purple-400 text-purple-300'
                   : c.rarity === 'RARE'
                   ? 'border-blue-500 text-blue-300'
                   : 'border-emerald-500 text-emerald-300';

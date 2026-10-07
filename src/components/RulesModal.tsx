@@ -63,8 +63,8 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
                 <span className="text-zinc-300 font-mono">2 Votes</span>
                 <span className="block text-[10px] text-zinc-500">25% drop</span>
               </div>
-              <div className="p-2 rounded-lg bg-zinc-950 border border-pink-500/40">
-                <span className="block text-pink-400 font-bold">EPIC</span>
+              <div className="p-2 rounded-lg bg-zinc-950 border border-purple-500/40">
+                <span className="block text-purple-400 font-bold">EPIC</span>
                 <span className="text-zinc-300 font-mono">3 Votes</span>
                 <span className="block text-[10px] text-zinc-500">5% drop</span>
               </div>

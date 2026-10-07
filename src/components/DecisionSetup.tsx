@@ -253,7 +253,7 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
           <span className="text-xs text-zinc-400">2 Votes (25%)</span>
         </div>
         <div className="p-2.5 rounded-lg bg-zinc-950/60 border border-zinc-900">
-          <span className="block text-[11px] font-mono text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-yellow-300 to-cyan-400 font-bold">EPIC</span>
+          <span className="block text-[11px] font-mono text-purple-400 font-bold">EPIC</span>
           <span className="text-xs text-zinc-400">3 Votes (5%)</span>
         </div>
       </div>
