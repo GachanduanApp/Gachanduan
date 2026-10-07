@@ -226,11 +226,10 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
             sound.playClick();
             onStartRoll();
           }}
-          className={`w-full py-4 px-6 rounded-xl font-display font-extrabold text-base tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none ${
-            isValidToRoll
-              ? 'bg-white hover:bg-zinc-200 text-black shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
-              : 'bg-zinc-900 text-zinc-400 border border-zinc-800 cursor-not-allowed'
-          }`}
+          className={`w-full py-4 px-6 rounded-xl font-display font-extrabold text-base tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none ${isValidToRoll
+            ? 'bg-white hover:bg-zinc-200 text-black shadow-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
+            : 'bg-zinc-900 text-zinc-400 border border-zinc-800 cursor-not-allowed'
+            }`}
         >
           <span>ROLL 10 CARDS</span>
           <ArrowRight className="w-4 h-4" />
