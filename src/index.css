@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+.font-display {
+  font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+}
+
+/* 3D Card Flip Essentials */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Epic Rainbow Border & Glow */
+@keyframes rainbow-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-rainbow {
+  background: linear-gradient(
+    90deg,
+    #ff0055,
+    #ff7700,
+    #ffdd00,
+    #00ff66,
+    #00ccff,
+    #7700ff,
+    #ff0055
+  );
+  background-size: 300% 300%;
+  animation: rainbow-border 4s ease infinite;
+}
+
+.rainbow-glow {
+  box-shadow: 0 0 25px -5px rgba(120, 119, 198, 0.4), 0 0 10px -2px rgba(255, 100, 150, 0.3);
+}
+
+.rare-glow {
+  box-shadow: 0 0 20px -3px rgba(59, 130, 246, 0.35);
+}
+
+.common-glow {
+  box-shadow: 0 0 15px -4px rgba(34, 197, 94, 0.25);
+}
