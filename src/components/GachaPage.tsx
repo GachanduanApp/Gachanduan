@@ -215,7 +215,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
             return (
               <div
                 key={card.id}
-                className="absolute w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px] rounded-3xl border-[3.5px] border-[#0B2A63] shadow-[0_8px_0_#0B2A63] overflow-hidden bg-[#0B2A63] transition-all duration-300"
+                className="absolute w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px] bg-transparent drop-shadow-[0_10px_20px_rgba(11,42,99,0.35)] transition-all duration-300 pointer-events-none"
                 style={{
                   transform: `translate(${config.x}px, ${config.y}px) rotate(${config.rot}deg)`,
                   zIndex: 5 - i,
@@ -231,7 +231,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
                       : '/assets/commonBack.png'
                   }
                   alt=""
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain select-none pointer-events-none"
                 />
               </div>
             );
