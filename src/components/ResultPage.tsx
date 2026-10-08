@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { DecisionResult, GachaCardData, OptionItem } from '../types';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { RotateCcw, Plus, Check, Copy } from 'lucide-react';
+import { RotateCcw, Plus, Check, Copy, Trophy, Sparkles, Dices, Layers } from 'lucide-react';
+import { GameButton } from './common/GameButton';
+import { Panel } from './common/Panel';
+import { Badge } from './common/Badge';
 
 interface ResultPageProps {
   question: string;
@@ -26,13 +29,13 @@ export const ResultPage: React.FC<ResultPageProps> = ({
   useEffect(() => {
     sound.playWinner();
 
-    // Subtle celebratory confetti
+    // Celebratory confetti blast
     confetti({
-      particleCount: 50,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#ffffff', '#a1a1aa', '#60a5fa', '#34d399', '#f472b6'],
-      ticks: 150,
+      particleCount: 80,
+      spread: 90,
+      origin: { y: 0.55 },
+      colors: ['#FFD52E', '#28D86B', '#2A91FF', '#D946EF', '#ffffff'],
+      ticks: 160,
       disableForReducedMotion: true,
     });
   }, []);
@@ -59,14 +62,16 @@ export const ResultPage: React.FC<ResultPageProps> = ({
 
   const handleCopy = () => {
     const lines = [
-      `GACHANDUAN Result:`,
+      `🎰 GACHANDUAN Result:`,
       `Topic: ${question || 'What are we deciding?'}`,
       result.isTie
-        ? `TIE-BREAKER! ${result.tiedOptionNames.join(' and ')} both scored ${winnerScore} votes.`
-        : `Winner: ${winnerOption.name} (${winnerScore} votes)`,
+        ? `⚡ IT'S A TIE! ${result.tiedOptionNames.join(' & ')} both scored ${winnerScore} votes. RNG broke the tie!`
+        : `🏆 Winner: ${winnerOption.name} (${winnerScore} votes)`,
       `Final Decision: ${winnerOption.name}`,
-      `Breakdown:`,
-      ...options.map((opt) => `- ${opt.name}: ${result.scores[opt.id] || 0} votes (${formatCalculation(opt.id)})`),
+      `Score Breakdown:`,
+      ...options.map(
+        (opt) => `- ${opt.name}: ${result.scores[opt.id] || 0} votes (${formatCalculation(opt.id)})`
+      ),
     ];
 
     navigator.clipboard.writeText(lines.join('\n'));
@@ -81,64 +86,70 @@ export const ResultPage: React.FC<ResultPageProps> = ({
   });
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8 sm:py-12">
-      {/* Result Card matching Section 14 & 25.4 */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
-        {/* Subtle background glow */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="w-full max-w-2xl mx-auto px-4 py-6 sm:py-10 relative z-10">
+      {/* 1. Main Victory / Result Card matching PDF Section 9 & 25.4 */}
+      <Panel variant="white" className="p-6 sm:p-10 text-center shadow-[0_12px_0_#0B2A63]">
+        {/* Top Trophy / Celebration Badge */}
+        <div className="flex justify-center mb-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-b from-[#FFE34E] to-[#FFB800] border-[3.5px] border-[#0B2A63] shadow-[0_5px_0_#0B2A63] flex items-center justify-center transform -rotate-3 hover:rotate-0 transition-transform">
+            <Trophy className="w-9 h-9 sm:w-11 sm:h-11 text-[#0B2A63]" />
+          </div>
+        </div>
 
-        {/* DECISION MADE or IT'S A TIE Header */}
+        {/* Tie Announcement Banner if applicable */}
         {result.isTie ? (
-          <div className="mb-6">
-            <span className="inline-block px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold tracking-widest uppercase mb-3">
+          <div className="mb-5 p-3.5 rounded-2xl bg-gradient-to-r from-[#FFF4D0] to-[#FFE799] border-[3px] border-[#0B2A63] shadow-[0_3px_0_#0B2A63] animate-in fade-in">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0B2A63] text-white font-display font-black text-xs uppercase tracking-wider mb-2">
+              <Dices className="w-3.5 h-3.5 text-[#FFD52E]" />
               IT’S A TIE!
-            </span>
-            <p className="text-sm text-zinc-400 max-w-md mx-auto">
-              <span className="text-zinc-200 font-semibold">{result.tiedOptionNames.join(' and ')}</span> both scored{' '}
-              <span className="text-white font-mono font-bold">{winnerScore}</span> votes.
+            </div>
+            <p className="text-xs sm:text-sm font-bold text-[#0B2A63]">
+              <span className="font-black underline">{result.tiedOptionNames.join(' and ')}</span> both scored{' '}
+              <span className="font-black text-base">{winnerScore}</span> votes!
             </p>
-            <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mt-3">
+            <p className="text-[11px] font-black uppercase tracking-widest text-[#168CF5] mt-1">
               RNG chose...
             </p>
           </div>
         ) : (
-          <div className="mb-6">
-            <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 block mb-2">
+          <div className="mb-4">
+            <span className="inline-block px-3 py-1 rounded-full bg-[#0B2A63] text-white font-display font-black text-xs uppercase tracking-wider mb-2 shadow-sm">
               DECISION MADE
             </span>
             {question && (
-              <p className="text-xs text-zinc-400 font-medium line-clamp-1 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm font-bold text-slate-500 max-w-md mx-auto truncate">
                 {question}
               </p>
             )}
           </div>
         )}
 
-        {/* WINNER NAME in prominent, bold typography */}
-        <div className="my-4">
-          <h2 className="font-display font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-white uppercase break-words leading-tight">
+        {/* WINNER NAME (Prominent, bold typography) */}
+        <div className="my-4 py-2">
+          <h2 className="font-display font-black text-4xl sm:text-5xl md:text-6xl text-[#0B2A63] uppercase tracking-tight break-words leading-tight drop-shadow-sm">
             {winnerOption.name}
           </h2>
-          <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800">
-            <span className="font-display font-black text-xl text-white tabular-nums">
+
+          <div className="mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#FFE34E] to-[#FFB800] border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63]">
+            <span className="font-display font-black text-2xl sm:text-3xl text-[#0B2A63] leading-none">
               {winnerScore}
             </span>
-            <span className="text-xs font-mono tracking-wider text-zinc-400 uppercase">
-              {winnerScore === 1 ? 'VOTE' : 'VOTES'}
+            <span className="font-display font-extrabold text-xs sm:text-sm uppercase tracking-wider text-[#0B2A63]">
+              {winnerScore === 1 ? 'TOTAL VOTE' : 'TOTAL VOTES'}
             </span>
           </div>
         </div>
 
-        <p className="text-xs text-zinc-500 italic mt-3 mb-8">
+        <p className="font-display font-extrabold text-sm text-[#168CF5] italic mt-1 mb-6">
           Luck has spoken.
         </p>
 
-        {/* SCORE BREAKDOWN TABLE */}
-        <div className="border-t border-b border-zinc-800/80 py-5 my-6 text-left space-y-3">
-          <div className="flex justify-between items-center text-[11px] font-mono uppercase tracking-wider text-zinc-500 px-1">
-            <span>Option</span>
-            <span>Calculation</span>
-            <span>Total Score</span>
+        {/* 2. Score Breakdown Table (Explains why the winner won) */}
+        <div className="border-t-[3px] border-b-[3px] border-[#0B2A63]/20 py-4 my-6 text-left space-y-2">
+          <div className="flex justify-between items-center text-xs font-black uppercase tracking-wider text-[#0B2A63] px-1 mb-2">
+            <span>Candidate</span>
+            <span>Card Formula</span>
+            <span>Final Score</span>
           </div>
 
           {sortedOptions.map((opt) => {
@@ -149,108 +160,109 @@ export const ResultPage: React.FC<ResultPageProps> = ({
             return (
               <div
                 key={opt.id}
-                className={`flex items-center justify-between p-3 rounded-xl transition-colors ${
+                className={`flex items-center justify-between p-3 rounded-2xl border-[2.5px] border-[#0B2A63] transition-all ${
                   isWinner
-                    ? 'bg-zinc-900/90 border border-zinc-700'
-                    : 'bg-black/50 border border-zinc-900'
+                    ? 'bg-gradient-to-r from-[#FFF9D6] to-[#FFECA0] shadow-[0_3px_0_#0B2A63] scale-[1.01]'
+                    : 'bg-[#F0F6FF]'
                 }`}
               >
                 <div className="flex items-center gap-2 max-w-[40%]">
-                  {isWinner && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  {isWinner ? (
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
                   )}
                   <span
-                    className={`text-sm font-semibold truncate ${
-                      isWinner ? 'text-white' : 'text-zinc-300'
+                    className={`font-display font-black text-sm truncate uppercase ${
+                      isWinner ? 'text-[#0B2A63]' : 'text-slate-700'
                     }`}
                   >
                     {opt.name}
                   </span>
                 </div>
 
-                <div className="text-xs font-mono text-zinc-500 text-center hidden sm:block">
+                <div className="text-xs font-bold text-slate-500 text-center max-w-[35%] truncate">
                   {calc}
                 </div>
 
-                <div className="text-right">
-                  <span
-                    className={`font-display font-bold text-base tabular-nums ${
-                      isWinner ? 'text-white' : 'text-zinc-400'
-                    }`}
-                  >
-                    {score} <span className="text-[10px] text-zinc-600 font-mono">pts</span>
-                  </span>
+                <div className="font-display font-black text-sm text-[#0B2A63] shrink-0">
+                  {score} {score === 1 ? 'vote' : 'votes'}
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* 10-Card Recap Strip */}
-        <div className="mb-8 text-left">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 block mb-2 px-1">
-            Card Distribution (10 Total)
-          </span>
-          <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-            {cards.map((c, idx) => {
-              const borderCol =
-                c.rarity === 'EPIC'
-                  ? 'border-purple-400 text-purple-300'
-                  : c.rarity === 'RARE'
-                  ? 'border-blue-500 text-blue-300'
-                  : 'border-emerald-500 text-emerald-300';
-              return (
-                <div
-                  key={c.id}
-                  title={`${c.optionName} (${c.rarity}, +${c.voteValue})`}
-                  className={`p-1.5 rounded-lg bg-black border ${borderCol} text-center`}
-                >
-                  <span className="block text-[8px] font-mono text-zinc-500">#{idx + 1}</span>
-                  <span className="block text-[10px] font-black truncate">{c.optionName.slice(0, 4)}</span>
-                  <span className="block text-[8px] font-mono font-bold">+{c.voteValue}</span>
-                </div>
-              );
-            })}
+        {/* 3. Revealed Cards Breakdown Strip */}
+        <div className="mb-6 bg-[#F0F6FF] rounded-2xl border-[2.5px] border-[#0B2A63] p-3 text-left">
+          <div className="flex items-center justify-between text-xs font-black text-[#0B2A63] mb-2 px-1">
+            <span className="uppercase tracking-wider flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-[#168CF5]" />
+              Rarity Distribution in this pack
+            </span>
+          </div>
+
+          <div className="flex items-center justify-around gap-2 text-center text-xs">
+            <div className="px-3 py-1.5 rounded-xl bg-white border-[2px] border-[#0B2A63] shadow-sm flex-1">
+              <span className="text-[10px] font-black text-emerald-600 block">COMMON</span>
+              <span className="font-display font-black text-sm text-[#0B2A63]">
+                {cards.filter((c) => c.rarity === 'COMMON').length}
+              </span>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-white border-[2px] border-[#0B2A63] shadow-sm flex-1">
+              <span className="text-[10px] font-black text-blue-600 block">RARE</span>
+              <span className="font-display font-black text-sm text-[#0B2A63]">
+                {cards.filter((c) => c.rarity === 'RARE').length}
+              </span>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-white border-[2px] border-[#0B2A63] shadow-sm flex-1">
+              <span className="text-[10px] font-black text-purple-600 block">EPIC</span>
+              <span className="font-display font-black text-sm text-[#0B2A63]">
+                {cards.filter((c) => c.rarity === 'EPIC').length}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* ACTION BUTTONS matching Section 14 */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-2">
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              onPlayAgain();
-            }}
-            className="flex-1 py-3.5 px-6 rounded-xl font-display font-black text-sm tracking-wider uppercase bg-white hover:bg-zinc-200 active:bg-zinc-300 text-black transition-colors flex items-center justify-center gap-2 focus:outline-none"
+        {/* 4. Action Buttons (Section 9.3 of PDF) */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <GameButton
+            variant="primary"
+            size="lg"
+            onClick={onPlayAgain}
+            icon={<RotateCcw className="w-5 h-5 text-[#0B2A63]" />}
+            className="w-full sm:w-auto px-6 py-3.5 text-base"
           >
-            <RotateCcw className="w-4 h-4" />
-            <span>PLAY AGAIN</span>
-          </button>
+            PLAY AGAIN
+          </GameButton>
 
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              onNewDecision();
-            }}
-            className="flex-1 py-3.5 px-6 rounded-xl font-display font-bold text-sm tracking-wider uppercase bg-zinc-900 hover:bg-zinc-800 active:bg-zinc-700 text-white border border-zinc-700 transition-colors flex items-center justify-center gap-2 focus:outline-none"
+          <GameButton
+            variant="secondary"
+            size="lg"
+            onClick={onNewDecision}
+            icon={<Plus className="w-5 h-5 text-[#0B2A63]" />}
+            className="w-full sm:w-auto px-6 py-3.5 text-base"
           >
-            <Plus className="w-4 h-4" />
-            <span>NEW DECISION</span>
-          </button>
+            NEW DECISION
+          </GameButton>
 
-          <button
-            type="button"
+          <GameButton
+            variant="cyan"
+            size="lg"
             onClick={handleCopy}
-            title="Copy decision summary"
-            className="py-3.5 px-4 rounded-xl font-mono text-xs bg-zinc-950 hover:bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-colors flex items-center justify-center gap-1.5 focus:outline-none"
+            icon={
+              copied ? (
+                <Check className="w-4 h-4 text-emerald-700" />
+              ) : (
+                <Copy className="w-4 h-4 text-[#0B2A63]" />
+              )
+            }
+            className="w-full sm:w-auto px-4 py-3.5 text-sm"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-            <span>{copied ? 'Copied' : 'Share'}</span>
-          </button>
+            {copied ? 'COPIED!' : 'SHARE'}
+          </GameButton>
         </div>
-      </div>
+      </Panel>
     </div>
   );
 };

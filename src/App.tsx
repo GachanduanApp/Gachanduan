@@ -14,6 +14,7 @@ import { GachaPage } from './components/GachaPage';
 import { ResultPage } from './components/ResultPage';
 import { RulesModal } from './components/RulesModal';
 import { HistoryModal } from './components/HistoryModal';
+import { PageBackground } from './components/layout/PageBackground';
 
 export default function App() {
   // Decision topic & submitted options (Defaulting to the canonical documentation example)
@@ -166,8 +167,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans selection:bg-white selection:text-black">
-      {/* Top Bar Navigation */}
+    <div className="min-h-screen relative flex flex-col font-sans selection:bg-[#FFD52E] selection:text-[#0B2A63] text-[#0B2A63]">
+      {/* 1. Global Cartoon Environmental Background (PDF Section 5.1 & 11) */}
+      <PageBackground />
+
+      {/* 2. Top Bar Navigation */}
       <Header
         onNewDecision={handleNewDecision}
         onOpenRules={() => setRulesOpen(true)}
@@ -177,8 +181,8 @@ export default function App() {
         status={gameStatus}
       />
 
-      {/* Main Dynamic View */}
-      <main className="flex-1 flex flex-col justify-center">
+      {/* 3. Main Dynamic View */}
+      <main className="flex-1 flex flex-col justify-center relative z-10">
         {gameStatus === 'SETUP' && (
           <DecisionSetup
             question={question}
@@ -221,14 +225,21 @@ export default function App() {
         )}
       </main>
 
-      {/* Minimal Monochrome Footer */}
-      <footer className="w-full border-t border-zinc-900 py-6 text-center text-xs text-zinc-400">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="font-mono">
-            GACHANDUAN <span className="text-zinc-500">·</span> RNG Decision Maker
-          </p>
-          <p className="text-zinc-400">
-            Weighted voting <span className="text-zinc-500">·</span> Fair & independent probability
+      {/* 4. Playful Cartoon Game Footer */}
+      <footer className="w-full relative z-10 py-6 text-center text-xs">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border-[2px] border-[#0B2A63] shadow-[0_2px_0_#0B2A63]">
+            <span className="font-display font-black text-xs text-[#0B2A63]">
+              GACHANDUAN
+            </span>
+            <span className="text-[#0B2A63] opacity-60">·</span>
+            <span className="text-[11px] font-bold text-[#0B2A63]">
+              RNG Gacha Decision Maker
+            </span>
+          </div>
+
+          <p className="text-white font-extrabold text-[11px] drop-shadow-[0_1px_2px_#0B2A63]">
+            Fair & Independent Probability · Weighted Voting Game
           </p>
         </div>
       </footer>

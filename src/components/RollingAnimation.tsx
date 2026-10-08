@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { OptionItem } from '../types';
+import { Panel } from './common/Panel';
+import { Sparkles, Dices } from 'lucide-react';
 
 interface RollingAnimationProps {
   options: OptionItem[];
@@ -16,38 +18,53 @@ export const RollingAnimation: React.FC<RollingAnimationProps> = ({ options, onC
       const randomOption = options[Math.floor(Math.random() * options.length)];
       setDisplayText(randomOption?.name || 'SHUFFLING');
 
-      if (count > 7) {
+      if (count > 9) {
         clearInterval(interval);
         setTimeout(() => {
           onComplete();
-        }, 150);
+        }, 180);
       }
-    }, 80);
+    }, 75);
 
     return () => clearInterval(interval);
   }, [options, onComplete]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-      <div className="relative p-8 rounded-2xl bg-zinc-950 border border-zinc-800 text-center max-w-sm w-full shadow-2xl">
-        <span className="text-[11px] font-mono tracking-widest text-zinc-500 uppercase block mb-3">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 relative z-10">
+      <Panel variant="white" className="p-8 text-center max-w-sm w-full">
+        {/* Animated Card Icon / Shuffler */}
+        <div className="w-20 h-24 mx-auto mb-4 relative flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FFE34E] to-[#FFB800] rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] -rotate-6 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#55DCFF] to-[#1EA7FD] rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] rotate-6 animate-bounce" />
+          <div className="relative z-10">
+            <Dices className="w-10 h-10 text-[#0B2A63]" />
+          </div>
+        </div>
+
+        <span className="inline-block px-3 py-1 rounded-full bg-[#0B2A63] text-white font-display font-black text-xs uppercase tracking-wider mb-3">
           GENERATING 10 CARDS
         </span>
 
-        <div className="h-14 flex items-center justify-center overflow-hidden">
-          <span className="font-display font-black text-2xl sm:text-3xl tracking-tight text-white uppercase animate-pulse">
+        {/* Dynamic Roulette Name */}
+        <div className="h-14 flex items-center justify-center overflow-hidden bg-[#F0F6FF] rounded-2xl border-[2.5px] border-[#0B2A63] my-2 px-3 shadow-inner">
+          <span className="font-display font-black text-2xl sm:text-3xl tracking-tight text-[#0B2A63] uppercase truncate animate-pulse">
             {displayText}
           </span>
         </div>
 
-        <div className="w-full bg-zinc-900 h-1 rounded-full overflow-hidden mt-6">
-          <div className="bg-white h-full animate-[shimmer_0.6s_ease-in-out_infinite]" style={{ width: '100%' }} />
+        {/* Chunky Cartoon Progress bar */}
+        <div className="w-full bg-[#E0ECFC] h-3.5 rounded-full border-[2.5px] border-[#0B2A63] overflow-hidden mt-5 p-0.5 shadow-inner">
+          <div
+            className="bg-gradient-to-r from-[#FFD52E] to-[#FF9900] h-full rounded-full animate-pulse transition-all duration-300"
+            style={{ width: '100%' }}
+          />
         </div>
 
-        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider mt-4">
-          INDEPENDENT RNG ROLL
+        <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-[#168CF5]" />
+          Independent Random Selection
         </p>
-      </div>
+      </Panel>
     </div>
   );
 };
