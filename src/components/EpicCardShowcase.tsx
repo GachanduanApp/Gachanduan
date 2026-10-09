@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { GachaCardData } from '../types';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
@@ -58,13 +59,13 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
     }, 250);
   };
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Epic Card Showcase"
       onClick={handleClose}
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center p-4 select-none overflow-hidden cursor-pointer transition-opacity duration-200 ${
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 select-none overflow-hidden cursor-pointer transition-opacity duration-200 ${
         isClosing ? 'opacity-0' : 'opacity-100 bg-[#0B2A63]/85 backdrop-blur-md'
       }`}
     >
@@ -99,9 +100,8 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
 
       {/* Top Banner */}
       <div
-        className={`relative z-10 text-center mb-5 transition-all duration-300 ${
-          isClosing ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
-        }`}
+        className={`relative z-10 text-center mb-5 transition-all duration-300 ${isClosing ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
+          }`}
       >
         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#D946EF] to-[#9333EA] border-[3.5px] border-[#0B2A63] text-white font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_6px_0_#0B2A63]">
           <Sparkles className="w-4 h-4 text-yellow-300 animate-spin" />
@@ -112,9 +112,8 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
       {/* Centered Large Card */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative z-10 max-w-[85vw] cursor-default transition-all duration-300 ${
-          isClosing ? 'scale-75 opacity-0' : 'scale-100'
-        }`}
+        className={`relative z-10 max-w-[85vw] cursor-default transition-all duration-300 ${isClosing ? 'scale-75 opacity-0' : 'scale-100'
+          }`}
       >
         <GachaCard
           card={card}
@@ -135,6 +134,7 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
           CONTINUE REVEAL
         </GameButton>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

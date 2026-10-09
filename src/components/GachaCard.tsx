@@ -87,16 +87,14 @@ export const GachaCard: React.FC<GachaCardProps> = ({
       role={onReveal && !card.revealed ? 'button' : 'figure'}
       tabIndex={onReveal && !card.revealed ? 0 : -1}
       aria-label={`${card.optionName || 'Hidden card'} (${card.revealed ? card.rarity : 'Unrevealed'})`}
-      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${
-        !card.revealed && !disabled && onReveal
+      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${!card.revealed && !disabled && onReveal
           ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
           : 'cursor-default'
-      } ${className}`}
+        } ${className}`}
     >
       <div
-        className={`relative w-full h-full duration-500 transform-style-3d transition-transform ease-out ${
-          revealed ? 'rotate-y-180' : ''
-        }`}
+        className={`relative w-full h-full duration-500 transform-style-3d transition-transform ease-out ${revealed ? 'rotate-y-180' : ''
+          }`}
       >
         {/* ================= CARD BACK (Face Down State) ================= */}
         {/* Invisible/transparent container with drop-shadow naturally following card PNG edges */}
@@ -136,27 +134,51 @@ export const GachaCard: React.FC<GachaCardProps> = ({
           />
 
           {/* Dynamic Content Layer strictly rendered in HTML inside safe card window */}
-          <div className="relative z-10 w-full h-full flex flex-col justify-between p-5 sm:p-6 pointer-events-none">
+          <div
+            className={`relative z-10 w-full h-full flex flex-col justify-between pointer-events-none ${
+              size === 'md' ? 'p-3 sm:p-3.5' : 'p-5 sm:p-6'
+            }`}
+          >
             {/* Top Bar: Card Number & Rarity Badge */}
             <div className="flex items-center justify-between">
-              <span className="px-2.5 py-0.5 rounded-xl bg-[#0B2A63] border-[2px] border-white/60 text-white font-display font-black text-xs shadow-sm">
+              <span
+                className={`rounded-xl bg-[#0B2A63] border-[2px] border-white/60 text-white font-display font-black shadow-sm ${
+                  size === 'md' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-0.5 text-xs'
+                }`}
+              >
                 #{index + 1} / 10
               </span>
 
               <span
-                className={`px-3 py-1 rounded-xl border-[2.5px] border-[#0B2A63] font-display font-black text-xs uppercase tracking-wider shadow-[0_2px_0_#0B2A63] ${currentTheme.badgeBg}`}
+                className={`rounded-xl border-[2.5px] border-[#0B2A63] font-display font-black uppercase tracking-wider shadow-[0_2px_0_#0B2A63] ${
+                  size === 'md' ? 'px-2 py-0.5 text-[10px]' : 'px-3 py-1 text-xs'
+                } ${currentTheme.badgeBg}`}
               >
                 {card.rarity}
               </span>
             </div>
 
             {/* Center Area: Candidate Option Name */}
-            <div className="flex-1 flex flex-col items-center justify-center px-2 py-4 text-center my-auto">
-              <div className="w-full max-w-[88%] bg-white/95 backdrop-blur-sm rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] py-4 px-3 sm:px-4">
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-400 block mb-1">
+            <div className="flex-1 flex flex-col items-center justify-center px-1 py-2 text-center my-auto">
+              <div
+                className={`w-full max-w-[90%] bg-white/95 backdrop-blur-sm rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] ${
+                  size === 'md' ? 'py-2 px-2' : 'py-4 px-3 sm:px-4'
+                }`}
+              >
+                <span
+                  className={`font-black uppercase tracking-wider text-slate-400 block mb-0.5 ${
+                    size === 'md' ? 'text-[9px]' : 'text-[10px] sm:text-xs mb-1'
+                  }`}
+                >
                   CANDIDATE
                 </span>
-                <h3 className="font-display font-black text-xl sm:text-2xl md:text-3xl text-[#0B2A63] leading-tight uppercase break-words drop-shadow-sm">
+                <h3
+                  className={`font-display font-black text-[#0B2A63] uppercase break-words drop-shadow-sm ${
+                    size === 'md'
+                      ? 'text-sm sm:text-base leading-snug line-clamp-2'
+                      : 'text-xl sm:text-2xl md:text-3xl leading-tight'
+                  }`}
+                >
                   {card.optionName}
                 </h3>
               </div>
@@ -165,9 +187,10 @@ export const GachaCard: React.FC<GachaCardProps> = ({
             {/* Bottom Bar: Vote Power Badge */}
             <div className="flex items-center justify-center">
               <div
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-2xl border-[2.5px] border-[#0B2A63] font-display font-black text-sm sm:text-base tracking-wider shadow-[0_3px_0_#0B2A63] ${currentTheme.badgeBg}`}
+                className={`inline-flex items-center rounded-2xl border-[2.5px] border-[#0B2A63] font-display font-black tracking-wider shadow-[0_3px_0_#0B2A63] ${
+                  size === 'md' ? 'px-2.5 py-0.5 text-xs' : 'px-4 py-1.5 text-sm sm:text-base'
+                } ${currentTheme.badgeBg}`}
               >
-                <Sparkles className="w-4 h-4 shrink-0" />
                 <span>{currentTheme.voteText}</span>
               </div>
             </div>

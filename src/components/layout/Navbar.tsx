@@ -48,7 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="secondary"
               size="sm"
               onClick={onOpenRules}
-              icon={<Sparkles className="w-3.5 h-3.5 text-[#168CF5]" />}
               className="py-1 px-3 text-xs"
             >
               How it Works
@@ -58,7 +57,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="secondary"
               size="sm"
               onClick={onOpenHistory}
-              icon={<HistoryIcon className="w-3.5 h-3.5 text-[#168CF5]" />}
               className="py-1 px-3 text-xs"
             >
               History
@@ -141,7 +139,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="secondary"
               size="md"
               onClick={() => handleAction(onOpenRules)}
-              icon={<Sparkles className="w-4 h-4 text-[#168CF5]" />}
               className="w-full py-2.5 justify-center text-sm shadow-[0_3px_0_#0B2A63]"
             >
               How it Works
@@ -152,7 +149,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               variant="secondary"
               size="md"
               onClick={() => handleAction(onOpenHistory)}
-              icon={<HistoryIcon className="w-4 h-4 text-[#168CF5]" />}
               className="w-full py-2.5 justify-center text-sm shadow-[0_3px_0_#0B2A63]"
             >
               Decision History
@@ -173,9 +169,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>Sound Effects</span>
               </span>
               <span
-                className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase ${
-                  soundEnabled ? 'bg-[#28D86B] text-[#0B2A63]' : 'bg-slate-700 text-slate-300'
-                }`}
+                className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase ${soundEnabled ? 'bg-[#28D86B] text-[#0B2A63]' : 'bg-slate-700 text-slate-300'
+                  }`}
               >
                 {soundEnabled ? 'ON' : 'OFF'}
               </span>

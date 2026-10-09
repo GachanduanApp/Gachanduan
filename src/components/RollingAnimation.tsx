@@ -60,8 +60,7 @@ export const RollingAnimation: React.FC<RollingAnimationProps> = ({ options, onC
           />
         </div>
 
-        <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-3 flex items-center justify-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-[#168CF5]" />
+        <p className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mt-3 text-center">
           Independent Random Selection
         </p>
       </Panel>

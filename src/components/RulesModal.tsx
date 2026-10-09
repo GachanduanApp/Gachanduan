@@ -23,7 +23,6 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         </button>
 
         <div className="flex items-center gap-2 mb-1.5 text-xs font-black tracking-wider text-[#168CF5] uppercase">
-          <Sparkles className="w-4 h-4 text-[#168CF5]" />
           <span>Game Rules & Mechanics</span>
         </div>
 

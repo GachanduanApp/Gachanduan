@@ -123,20 +123,16 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
           <span className="text-[11px] font-black uppercase tracking-wider text-blue-200 mr-1 drop-shadow-sm">
             Quick Packs:
           </span>
-          {PRESETS.map((preset) => {
-            const IconComp = preset.icon;
-            return (
-              <button
-                key={preset.name}
-                type="button"
-                onClick={() => handleLoadPreset(preset)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 hover:bg-white text-[#0B2A63] border-[2.5px] border-[#0B2A63] shadow-[0_3px_0_#0B2A63] active:translate-y-[2px] active:shadow-[0_1px_0_#0B2A63] text-xs font-extrabold transition-all duration-75 cursor-pointer"
-              >
-                <IconComp className="w-3.5 h-3.5 text-[#168CF5]" />
-                <span>{preset.name}</span>
-              </button>
-            );
-          })}
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() => handleLoadPreset(preset)}
+              className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/90 hover:bg-white text-[#0B2A63] border-[2.5px] border-[#0B2A63] shadow-[0_3px_0_#0B2A63] active:translate-y-[2px] active:shadow-[0_1px_0_#0B2A63] text-xs font-extrabold transition-all duration-75 cursor-pointer"
+            >
+              <span>{preset.name}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -275,8 +271,7 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
       {/* 3. Rarity Legend Strip (Section 6 & 7 of PDF) */}
       <div className="mt-6 bg-white/90 backdrop-blur-sm rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] p-3.5 sm:p-4">
         <div className="flex items-center justify-between text-xs font-black text-[#0B2A63] mb-2 px-1">
-          <span className="uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#168CF5]" />
+          <span className="uppercase tracking-wider">
             Card Rarity & Vote Power
           </span>
           <span className="text-[11px] font-bold text-slate-500">10 Cards / Roll</span>

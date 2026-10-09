@@ -160,11 +160,10 @@ export const ResultPage: React.FC<ResultPageProps> = ({
             return (
               <div
                 key={opt.id}
-                className={`flex items-center justify-between p-3 rounded-2xl border-[2.5px] border-[#0B2A63] transition-all ${
-                  isWinner
+                className={`flex items-center justify-between p-3 rounded-2xl border-[2.5px] border-[#0B2A63] transition-all ${isWinner
                     ? 'bg-gradient-to-r from-[#FFF9D6] to-[#FFECA0] shadow-[0_3px_0_#0B2A63] scale-[1.01]'
                     : 'bg-[#F0F6FF]'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2 max-w-[40%]">
                   {isWinner ? (
@@ -173,9 +172,8 @@ export const ResultPage: React.FC<ResultPageProps> = ({
                     <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
                   )}
                   <span
-                    className={`font-display font-black text-sm truncate uppercase ${
-                      isWinner ? 'text-[#0B2A63]' : 'text-slate-700'
-                    }`}
+                    className={`font-display font-black text-sm truncate uppercase ${isWinner ? 'text-[#0B2A63]' : 'text-slate-700'
+                      }`}
                   >
                     {opt.name}
                   </span>
@@ -196,8 +194,7 @@ export const ResultPage: React.FC<ResultPageProps> = ({
         {/* 3. Revealed Cards Breakdown Strip */}
         <div className="mb-6 bg-[#F0F6FF] rounded-2xl border-[2.5px] border-[#0B2A63] p-3 text-left">
           <div className="flex items-center justify-between text-xs font-black text-[#0B2A63] mb-2 px-1">
-            <span className="uppercase tracking-wider flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#168CF5]" />
+            <span className="uppercase tracking-wider">
               Rarity Distribution in this pack
             </span>
           </div>

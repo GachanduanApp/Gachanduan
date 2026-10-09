@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GachaCardData, OptionItem, OptionScoreBreakdown } from '../types';
 import { EpicCardShowcase } from './EpicCardShowcase';
+import { RevealAllModal } from './RevealAllModal';
 import { GachaCard } from './GachaCard';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
@@ -15,8 +16,8 @@ interface GachaPageProps {
   options: OptionItem[];
   liveScores: Record<string, number>;
   liveBreakdown: Record<string, OptionScoreBreakdown>;
-  onRevealCard: (cardId: string) => void;
-  onRevealAll: () => void;
+  onRevealCard: (cardId: string, autoCheck?: boolean) => void;
+  onFinishRevealAll: () => void;
   onReset: () => void;
 }
 
@@ -26,13 +27,14 @@ export const GachaPage: React.FC<GachaPageProps> = ({
   options,
   liveScores,
   onRevealCard,
-  onRevealAll,
+  onFinishRevealAll,
   onReset,
 }) => {
   // Current active card index on top of the TCG deck (0 to 9)
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [isSlidingOut, setIsSlidingOut] = useState<boolean>(false);
+  const [discardingCard, setDiscardingCard] = useState<{ card: GachaCardData; index: number } | null>(null);
   const [epicShowcase, setEpicShowcase] = useState<{ card: GachaCardData; index: number } | null>(null);
+  const [isRevealAllOpen, setIsRevealAllOpen] = useState<boolean>(false);
 
   const revealedCount = cards.filter((c) => c.revealed).length;
   const isAllRevealed = revealedCount === 10;
@@ -88,21 +90,26 @@ export const GachaPage: React.FC<GachaPageProps> = ({
 
   // Next card in deck
   const handleNextCard = () => {
-    if (activeIndex >= cards.length - 1 || isSlidingOut) return;
+    if (activeIndex >= cards.length - 1 || discardingCard) return;
 
-    setIsSlidingOut(true);
     sound.playClick();
+    const prevCard = currentCard;
+    const prevIndex = activeIndex;
+
+    // Immediately advance to next card so it is in place sitting face down
+    setActiveIndex((prev) => Math.min(prev + 1, cards.length - 1));
+    setDiscardingCard({ card: prevCard, index: prevIndex });
 
     setTimeout(() => {
-      setActiveIndex((prev) => Math.min(prev + 1, cards.length - 1));
-      setIsSlidingOut(false);
-    }, 220);
+      setDiscardingCard(null);
+    }, 270);
   };
 
   // Jump to specific card in collection
   const handleSelectCard = (index: number) => {
     if (index === activeIndex) return;
     sound.playClick();
+    setDiscardingCard(null);
     setActiveIndex(index);
   };
 
@@ -127,7 +134,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
                 <GameButton
                   variant="cyan"
                   size="sm"
-                  onClick={onRevealAll}
+                  onClick={() => setIsRevealAllOpen(true)}
                   icon={<Eye className="w-3.5 h-3.5 text-[#0B2A63]" />}
                 >
                   Reveal All
@@ -147,8 +154,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
           {/* Chunky Cartoon Progress Bar */}
           <div>
             <div className="flex justify-between items-center text-xs font-extrabold text-[#0B2A63] mb-1.5 px-0.5">
-              <span className="flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#168CF5]" />
+              <span>
                 CARDS REVEALED: {revealedCount} / 10
               </span>
               <span>{progressPercent}%</span>
@@ -167,8 +173,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
       {/* 2. Live Score Tally (Section 8.3 of PDF) */}
       <div className="w-full mb-6">
         <div className="flex items-center justify-between text-xs font-black text-white px-2 mb-2 drop-shadow-[0_1px_2px_#0B2A63]">
-          <span className="uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#FFD52E]" />
+          <span className="uppercase tracking-wider">
             Live Weighted Tally
           </span>
           <span className="text-[11px] font-semibold text-blue-100 opacity-90">
@@ -238,14 +243,25 @@ export const GachaPage: React.FC<GachaPageProps> = ({
           })}
         </div>
 
-        {/* Current Active Playable Card */}
-        <div
-          className={`relative z-20 transition-transform duration-200 ${
-            isSlidingOut ? 'translate-x-full opacity-0 rotate-12' : ''
-          }`}
-        >
+        {/* Current Active Playable Card & Discard Layer */}
+        <div className="relative z-20 flex items-center justify-center">
+          {/* Discarding Card (previous revealed card swipes out to the right) */}
+          {discardingCard && (
+            <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none animate-card-slide-out">
+              <GachaCard
+                key={`discard-${discardingCard.card.id}`}
+                card={discardingCard.card}
+                index={discardingCard.index}
+                size="lg"
+                disabled
+              />
+            </div>
+          )}
+
+          {/* Next Playable Card (Stationary on top of deck, face down, no un-flip) */}
           {currentCard && (
             <GachaCard
+              key={currentCard.id}
               card={currentCard}
               index={activeIndex}
               onReveal={() => handleRevealCurrent()}
@@ -261,7 +277,6 @@ export const GachaPage: React.FC<GachaPageProps> = ({
               variant="primary"
               size="lg"
               onClick={handleRevealCurrent}
-              icon={<Sparkles className="w-5 h-5 text-[#0B2A63]" />}
               className="py-3 px-8 text-lg shadow-[0_5px_0_#0B2A63]"
             >
               TAP TO REVEAL
@@ -289,8 +304,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
       <div className="w-full mt-4">
         <Panel variant="white" className="p-3.5 sm:p-4">
           <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-xs font-black text-[#0B2A63] uppercase tracking-wider flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#168CF5]" />
+            <span className="text-xs font-black text-[#0B2A63] uppercase tracking-wider">
               Card Collection (10 Slots)
             </span>
             <span className="text-[11px] font-bold text-slate-500">
@@ -358,6 +372,18 @@ export const GachaPage: React.FC<GachaPageProps> = ({
           onClose={() => setEpicShowcase(null)}
         />
       )}
+
+      {/* 10-Card Animated Summon Reveal Modal */}
+      <RevealAllModal
+        question={question}
+        cards={cards}
+        isOpen={isRevealAllOpen}
+        onRevealCard={(cardId) => onRevealCard(cardId, false)}
+        onComplete={() => {
+          setIsRevealAllOpen(false);
+          onFinishRevealAll();
+        }}
+      />
     </div>
   );
 };

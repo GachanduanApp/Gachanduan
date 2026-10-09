@@ -31,7 +31,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         </button>
 
         <div className="flex items-center gap-2 mb-1.5 text-xs font-black tracking-wider text-[#168CF5] uppercase">
-          <HistoryIcon className="w-4 h-4 text-[#168CF5]" />
           <span>Local Session Log</span>
         </div>
 

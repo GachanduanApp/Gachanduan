@@ -69,69 +69,51 @@ export default function App() {
     setGameStatus('REVEALING');
   };
 
-  // Reveal a single card
-  const handleRevealCard = (cardId: string) => {
+  // Reveal a card (autoCheck determines if it should trigger auto-transition on 10th card)
+  const handleRevealCard = (cardId: string, autoCheck: boolean = true) => {
     setCards((prev) => {
       const next = prev.map((c) => (c.id === cardId ? { ...c, revealed: true } : c));
-      checkCompletion(next);
+      if (autoCheck) {
+        checkCompletion(next);
+      }
       return next;
     });
   };
 
-  // Reveal all cards with quick stagger
-  const handleRevealAll = () => {
-    sound.playClick();
-    let delay = 0;
-    setCards((prev) => {
-      const next = [...prev];
-      next.forEach((c, idx) => {
-        if (!c.revealed) {
-          setTimeout(() => {
-            setCards((curr) => {
-              const updated = curr.map((card, i) => (i === idx ? { ...card, revealed: true } : card));
-              checkCompletion(updated);
-              return updated;
-            });
-          }, delay);
-          delay += 100;
-        }
-      });
-      return prev;
-    });
+  // Finalize scores, winner, and save history before transitioning to RESULT
+  const finalizeResult = (currentCards: GachaCardData[]) => {
+    const finalCalculation = calculateScores(options, currentCards, false);
+    const result = determineWinner(options, finalCalculation.scores, finalCalculation.breakdown);
+
+    setDecisionResult(result);
+
+    // Save to session history
+    const historyEntry: DecisionHistoryItem = {
+      id: `hist-${Date.now()}`,
+      timestamp: Date.now(),
+      question,
+      winnerName: result.winnerName,
+      winnerVotes: result.scores[result.winnerId] || 0,
+      isTie: result.isTie,
+      tiedNames: result.tiedOptionNames,
+      options: options.map((o) => o.name),
+      cardsSummary: {
+        common: currentCards.filter((c) => c.rarity === 'COMMON').length,
+        rare: currentCards.filter((c) => c.rarity === 'RARE').length,
+        epic: currentCards.filter((c) => c.rarity === 'EPIC').length,
+      },
+    };
+
+    setHistory((prev) => [historyEntry, ...prev].slice(0, 20));
+    setGameStatus('RESULT');
   };
 
-  // Check if all 10 cards are revealed, and transition to RESULT
+  // Check if all 10 cards are revealed manually, then transition to RESULT with suspense delay
   const checkCompletion = (currentCards: GachaCardData[]) => {
     const revealedCount = currentCards.filter((c) => c.revealed).length;
     if (revealedCount === 10) {
-      // All 10 cards revealed: calculate final scores & determine winner
-      const finalCalculation = calculateScores(options, currentCards, false);
-      const result = determineWinner(options, finalCalculation.scores, finalCalculation.breakdown);
-
-      setDecisionResult(result);
-
-      // Save to session history
-      const historyEntry: DecisionHistoryItem = {
-        id: `hist-${Date.now()}`,
-        timestamp: Date.now(),
-        question,
-        winnerName: result.winnerName,
-        winnerVotes: result.scores[result.winnerId] || 0,
-        isTie: result.isTie,
-        tiedNames: result.tiedOptionNames,
-        options: options.map((o) => o.name),
-        cardsSummary: {
-          common: currentCards.filter((c) => c.rarity === 'COMMON').length,
-          rare: currentCards.filter((c) => c.rarity === 'RARE').length,
-          epic: currentCards.filter((c) => c.rarity === 'EPIC').length,
-        },
-      };
-
-      setHistory((prev) => [historyEntry, ...prev].slice(0, 20));
-
-      // Small delay for dramatic reveal before showing final result
       setTimeout(() => {
-        setGameStatus('RESULT');
+        finalizeResult(currentCards);
       }, 1800);
     }
   };
@@ -182,7 +164,7 @@ export default function App() {
       />
 
       {/* 3. Main Dynamic View */}
-      <main className="flex-1 flex flex-col justify-center relative z-10">
+      <main className="flex-1 flex flex-col justify-center relative">
         {gameStatus === 'SETUP' && (
           <DecisionSetup
             question={question}
@@ -208,7 +190,7 @@ export default function App() {
             liveScores={liveTally.scores}
             liveBreakdown={liveTally.breakdown}
             onRevealCard={handleRevealCard}
-            onRevealAll={handleRevealAll}
+            onFinishRevealAll={() => finalizeResult(cards)}
             onReset={handleNewDecision}
           />
         )}
@@ -225,24 +207,6 @@ export default function App() {
         )}
       </main>
 
-      {/* 4. Playful Cartoon Game Footer */}
-      <footer className="w-full relative z-10 py-6 text-center text-xs">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border-[2px] border-[#0B2A63] shadow-[0_2px_0_#0B2A63]">
-            <span className="font-display font-black text-xs text-[#0B2A63]">
-              GACHANDUAN
-            </span>
-            <span className="text-[#0B2A63] opacity-60">·</span>
-            <span className="text-[11px] font-bold text-[#0B2A63]">
-              RNG Gacha Decision Maker
-            </span>
-          </div>
-
-          <p className="text-white font-extrabold text-[11px] drop-shadow-[0_1px_2px_#0B2A63]">
-            Fair & Independent Probability · Weighted Voting Game
-          </p>
-        </div>
-      </footer>
 
       {/* Modals */}
       <RulesModal isOpen={rulesOpen} onClose={() => setRulesOpen(false)} />
