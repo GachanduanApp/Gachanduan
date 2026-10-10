@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { GachaCardData } from '../types';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { Sparkles, X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { GameButton } from './common/GameButton';
 import { GachaCard } from './GachaCard';
 
@@ -65,9 +65,8 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
       aria-modal="true"
       aria-label="Epic Card Showcase"
       onClick={handleClose}
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 select-none overflow-hidden cursor-pointer transition-opacity duration-200 ${
-        isClosing ? 'opacity-0' : 'opacity-100 bg-[#0B2A63]/85 backdrop-blur-md'
-      }`}
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 select-none overflow-hidden cursor-pointer transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100 bg-[#0B2A63]/85 backdrop-blur-md'
+        }`}
     >
       {/* Background Animated Atmosphere Video / Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -83,7 +82,7 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
       </div>
 
       {/* Floating cartoon stars / particles */}
-      <div className="absolute pointer-events-none w-72 h-72 rounded-full border-4 border-purple-300/40 shadow-[0_0_80px_rgba(217,70,239,0.8)] animate-pulse" />
+      <div className="absolute pointer-events-none w-72 h-72 rounded-full border-4 border-purple-300/40 shadow-[0_0_80px_rgba(217,70,239,0.8)]" />
 
       {/* Close button */}
       <button
@@ -103,8 +102,7 @@ export const EpicCardShowcase: React.FC<EpicCardShowcaseProps> = ({ card, index,
         className={`relative z-10 text-center mb-5 transition-all duration-300 ${isClosing ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'
           }`}
       >
-        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-gradient-to-r from-[#D946EF] to-[#9333EA] border-[3.5px] border-[#0B2A63] text-white font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_6px_0_#0B2A63]">
-          <Sparkles className="w-4 h-4 text-yellow-300 animate-spin" />
+        <div className="inline-flex items-center justify-center px-5 py-2 rounded-2xl bg-gradient-to-r from-[#D946EF] to-[#9333EA] border-[3.5px] border-[#0B2A63] text-white font-display font-black text-sm sm:text-base uppercase tracking-wider shadow-[0_6px_0_#0B2A63]">
           <span>EPIC CARD PULL! (+3 VOTES)</span>
         </div>
       </div>

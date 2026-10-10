@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Sparkles, History as HistoryIcon, PlusCircle, Menu, X } from 'lucide-react';
 import { GameButton } from '../common/GameButton';
 import { IconButton } from '../common/IconButton';
@@ -20,6 +20,24 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleSound,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Only visible when the user is scrolled to the top
+      if (currentScrollY <= 15) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+        setMobileMenuOpen(false); // also closes/hides the hamburger content
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleAction = (action: () => void) => {
     setMobileMenuOpen(false);
@@ -27,7 +45,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="w-full sticky top-3 z-40 px-3 sm:px-6">
+    <header
+      className={`w-full sticky top-3 z-40 px-3 sm:px-6 transition-all duration-300 ease-in-out ${
+        isVisible
+          ? 'opacity-100 translate-y-0 pointer-events-auto'
+          : 'opacity-0 -translate-y-6 pointer-events-none'
+      }`}
+    >
       <div className="max-w-5xl mx-auto">
         {/* Main Navbar Pill */}
         <div className="bg-[#0B2A63] border-[3.5px] border-[#071d47] rounded-3xl sm:rounded-full px-4 sm:px-6 py-2.5 shadow-[0_6px_0_#06193d] flex items-center justify-between gap-3 backdrop-blur-md">
@@ -122,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Dropdown Menu Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-2 p-3 bg-[#0B2A63] border-[3.5px] border-[#071d47] rounded-3xl shadow-[0_8px_0_#06193d] flex flex-col gap-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="md:hidden mt-2 mb-4 p-3 bg-[#0B2A63] border-[3.5px] border-[#071d47] rounded-3xl shadow-[0_8px_0_#06193d] flex flex-col gap-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
             {/* New Decision Action */}
             <GameButton
               variant="primary"

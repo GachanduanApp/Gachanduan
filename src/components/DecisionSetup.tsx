@@ -112,7 +112,7 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
         </div>
 
         <p className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-wide mt-2 drop-shadow-[0_2px_4px_#0B2A63]">
-          Can’t decide? Let RNG decide.
+          Can’t decide? Let GACHANDUAN decide.
         </p>
         <p className="text-xs sm:text-sm font-semibold text-blue-100 max-w-md mx-auto mt-1 opacity-90">
           Add your options, roll the 10 gacha cards, and let luck make the decision!
@@ -267,45 +267,6 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
           )}
         </div>
       </Panel>
-
-      {/* 3. Rarity Legend Strip (Section 6 & 7 of PDF) */}
-      <div className="mt-6 bg-white/90 backdrop-blur-sm rounded-2xl border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] p-3.5 sm:p-4">
-        <div className="flex items-center justify-between text-xs font-black text-[#0B2A63] mb-2 px-1">
-          <span className="uppercase tracking-wider">
-            Card Rarity & Vote Power
-          </span>
-          <span className="text-[11px] font-bold text-slate-500">10 Cards / Roll</span>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 text-center">
-          {/* COMMON */}
-          <div className="p-2 rounded-xl bg-[#28D86B]/15 border-[2px] border-[#28D86B] text-[#0B2A63]">
-            <Badge rarity="COMMON" size="sm">
-              COMMON
-            </Badge>
-            <div className="font-display font-black text-sm text-[#0B2A63] mt-1">1 VOTE</div>
-            <div className="text-[10px] font-bold text-slate-500">70% Drop Rate</div>
-          </div>
-
-          {/* RARE */}
-          <div className="p-2 rounded-xl bg-[#2A91FF]/15 border-[2px] border-[#2A91FF] text-[#0B2A63]">
-            <Badge rarity="RARE" size="sm">
-              RARE
-            </Badge>
-            <div className="font-display font-black text-sm text-[#0B2A63] mt-1">2 VOTES</div>
-            <div className="text-[10px] font-bold text-slate-500">25% Drop Rate</div>
-          </div>
-
-          {/* EPIC */}
-          <div className="p-2 rounded-xl bg-purple-500/15 border-[2px] border-purple-500 text-[#0B2A63]">
-            <Badge rarity="EPIC" size="sm">
-              EPIC
-            </Badge>
-            <div className="font-display font-black text-sm text-[#9333EA] mt-1">3 VOTES</div>
-            <div className="text-[10px] font-bold text-slate-500">5% Drop Rate</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

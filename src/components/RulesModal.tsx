@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Sparkles, Dices, Layers, Trophy } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Badge } from './common/Badge';
 
 interface RulesModalProps {
@@ -22,9 +22,9 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1.5 text-xs font-black tracking-wider text-[#168CF5] uppercase">
+        {/* <div className="flex items-center gap-2 mb-1.5 text-xs font-black tracking-wider text-[#168CF5] uppercase">
           <span>Game Rules & Mechanics</span>
-        </div>
+        </div> */}
 
         <h2 className="font-display font-black text-2xl sm:text-3xl text-[#0B2A63] mb-3">
           How GACHANDUAN Works
@@ -37,8 +37,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         <div className="space-y-3.5 text-sm">
           {/* Step 1 */}
           <div className="p-4 rounded-2xl bg-[#F0F6FF] border-[2.5px] border-[#0B2A63]">
-            <div className="flex items-center gap-2 font-display font-black text-[#0B2A63] mb-1">
-              <Dices className="w-4 h-4 text-[#168CF5]" />
+            <div className="font-display font-black text-[#0B2A63] mb-1">
               <span>1. Uniform Option RNG</span>
             </div>
             <p className="text-xs font-medium text-slate-600 leading-relaxed">
@@ -48,8 +47,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
           {/* Step 2 */}
           <div className="p-4 rounded-2xl bg-[#F0F6FF] border-[2.5px] border-[#0B2A63]">
-            <div className="flex items-center gap-2 font-display font-black text-[#0B2A63] mb-1.5">
-              <Layers className="w-4 h-4 text-[#168CF5]" />
+            <div className="font-display font-black text-[#0B2A63] mb-1.5">
               <span>2. Independent Rarity Roll</span>
             </div>
             <p className="text-xs font-medium text-slate-600 leading-relaxed mb-3">
@@ -79,8 +77,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
           {/* Step 3 */}
           <div className="p-4 rounded-2xl bg-[#F0F6FF] border-[2.5px] border-[#0B2A63]">
-            <div className="flex items-center gap-2 font-display font-black text-[#0B2A63] mb-1">
-              <Trophy className="w-4 h-4 text-[#FFD52E]" />
+            <div className="font-display font-black text-[#0B2A63] mb-1">
               <span>3. Weighted Winner & RNG Tie Break</span>
             </div>
             <p className="text-xs font-medium text-slate-600 leading-relaxed">

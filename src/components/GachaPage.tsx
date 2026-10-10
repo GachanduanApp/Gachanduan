@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GachaCardData, OptionItem, OptionScoreBreakdown } from '../types';
 import { EpicCardShowcase } from './EpicCardShowcase';
 import { RevealAllModal } from './RevealAllModal';
@@ -36,6 +36,25 @@ export const GachaPage: React.FC<GachaPageProps> = ({
   const [epicShowcase, setEpicShowcase] = useState<{ card: GachaCardData; index: number } | null>(null);
   const [isRevealAllOpen, setIsRevealAllOpen] = useState<boolean>(false);
 
+  // Check screen width for desktop vs compact mobile deck arrangement
+  const [isDesktop, setIsDesktop] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 640;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(min-width: 640px)');
+    const updateMatches = (e: MediaQueryListEvent | MediaQueryList) => setIsDesktop(e.matches);
+    updateMatches(mq);
+
+    const handler = (e: MediaQueryListEvent) => updateMatches(e);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const revealedCount = cards.filter((c) => c.revealed).length;
   const isAllRevealed = revealedCount === 10;
   const progressPercent = Math.round((revealedCount / 10) * 100);
@@ -43,16 +62,26 @@ export const GachaPage: React.FC<GachaPageProps> = ({
   const currentCard = cards[activeIndex] || cards[0];
   const remainingInDeck = Math.max(0, cards.length - activeIndex - 1);
 
-  // Cards remaining in deck behind active card (showing up to 4 fanned cards)
+  // Cards remaining in deck behind active card (showing 3–4 background cards)
   const remainingCards = cards.slice(activeIndex + 1);
   const fanCards = remainingCards.slice(0, 4);
 
-  const fanConfigs = [
-    { x: 18, y: 8, rot: 3 },
-    { x: -20, y: 12, rot: -4 },
-    { x: 34, y: 16, rot: 6 },
-    { x: -38, y: 20, rot: -7 },
-  ];
+  // Symmetrical deck arrangements:
+  // Desktop: controlled, slightly fanned stack with balanced alternating pairs
+  // Mobile: compact, nearly straight stack to conserve space and eliminate horizontal overflow
+  const fanConfigs = isDesktop
+    ? [
+      { x: 6, y: -4, rot: 1.8 },
+      { x: -6, y: -7, rot: -1.8 },
+      { x: 10, y: -10, rot: 2.8 },
+      { x: -10, y: -13, rot: -2.8 },
+    ]
+    : [
+      { x: 3, y: -3, rot: 0.8 },
+      { x: -3, y: -5, rot: -0.8 },
+      { x: 4, y: -7, rot: 1.2 },
+      { x: -4, y: -9, rot: -1.2 },
+    ];
 
   // Reveal the current active card
   const handleRevealCurrent = () => {
@@ -114,9 +143,9 @@ export const GachaPage: React.FC<GachaPageProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 sm:py-8 flex flex-col items-center relative z-10">
+    <div className="w-full max-w-4xl mx-auto px-4 pt-6 sm:pt-10 pb-8 flex flex-col items-center relative z-10 overflow-x-hidden sm:overflow-x-visible">
       {/* 1. Header Information & Progress Banner */}
-      <div className="w-full mb-4">
+      <div className="w-full mb-6">
         <Panel variant="white" className="p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-3">
             <div>
@@ -174,11 +203,11 @@ export const GachaPage: React.FC<GachaPageProps> = ({
       <div className="w-full mb-6">
         <div className="flex items-center justify-between text-xs font-black text-white px-2 mb-2 drop-shadow-[0_1px_2px_#0B2A63]">
           <span className="uppercase tracking-wider">
-            Live Weighted Tally
+            Score Counts
           </span>
-          <span className="text-[11px] font-semibold text-blue-100 opacity-90">
+          {/* <span className="text-[11px] font-semibold text-blue-100 opacity-90">
             Updates in real-time
-          </span>
+          </span> */}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -191,11 +220,10 @@ export const GachaPage: React.FC<GachaPageProps> = ({
             return (
               <div
                 key={opt.id}
-                className={`px-3.5 py-2.5 rounded-2xl border-[2.5px] border-[#0B2A63] shadow-[0_3px_0_#0B2A63] flex items-center justify-between gap-2 transition-transform duration-100 ${
-                  isLeading
-                    ? 'bg-gradient-to-b from-[#FFF9D6] to-[#FFE875]'
-                    : 'bg-white/95'
-                }`}
+                className={`px-3.5 py-2.5 rounded-2xl border-[2.5px] border-[#0B2A63] shadow-[0_3px_0_#0B2A63] flex items-center justify-between gap-2 transition-transform duration-100 ${isLeading
+                  ? 'bg-gradient-to-b from-[#FFF9D6] to-[#FFE875]'
+                  : 'bg-white/95'
+                  }`}
               >
                 <div className="min-w-0">
                   <span className="font-display font-extrabold text-xs sm:text-sm text-[#0B2A63] truncate block">
@@ -212,19 +240,19 @@ export const GachaPage: React.FC<GachaPageProps> = ({
       </div>
 
       {/* 3. Central Card Stage (Section 8.2 of PDF) */}
-      <div className="relative w-full max-w-sm flex flex-col items-center justify-center my-3 sm:my-6 min-h-[440px] sm:min-h-[500px]">
-        {/* Fan / Stack of cards behind active card */}
+      <div className="relative w-full max-w-sm flex flex-col items-center justify-center my-4 sm:my-6 min-h-[440px] sm:min-h-[500px]">
+        {/* Fan / Stack of cards behind active card (Clean, Symmetrical, Solid - No Ghosting) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {fanCards.map((card, i) => {
             const config = fanConfigs[i] || { x: 0, y: 0, rot: 0 };
             return (
               <div
                 key={card.id}
-                className="absolute w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px] bg-transparent drop-shadow-[0_10px_20px_rgba(11,42,99,0.35)] transition-all duration-300 pointer-events-none"
+                className="absolute w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px] bg-transparent drop-shadow-[0_8px_16px_rgba(11,42,99,0.22)] transition-transform duration-300 pointer-events-none select-none"
                 style={{
-                  transform: `translate(${config.x}px, ${config.y}px) rotate(${config.rot}deg)`,
-                  zIndex: 5 - i,
-                  opacity: 0.9 - i * 0.15,
+                  transform: `translate3d(${config.x}px, ${config.y}px, 0) rotate(${config.rot}deg)`,
+                  zIndex: 10 - i,
+                  opacity: 1, // Solid opacity eliminates ghosting
                 }}
               >
                 <img
@@ -232,8 +260,8 @@ export const GachaPage: React.FC<GachaPageProps> = ({
                     card.rarity === 'EPIC'
                       ? '/assets/epicBack.png'
                       : card.rarity === 'RARE'
-                      ? '/assets/rareBack.png'
-                      : '/assets/commonBack.png'
+                        ? '/assets/rareBack.png'
+                        : '/assets/commonBack.png'
                   }
                   alt=""
                   className="w-full h-full object-contain select-none pointer-events-none"
@@ -243,8 +271,8 @@ export const GachaPage: React.FC<GachaPageProps> = ({
           })}
         </div>
 
-        {/* Current Active Playable Card & Discard Layer */}
-        <div className="relative z-20 flex items-center justify-center">
+        {/* Current Active Playable Card & Discard Layer with subtle lift/bounce on interaction */}
+        <div className="relative z-20 flex items-center justify-center transition-all duration-200 ease-out hover:-translate-y-2 hover:drop-shadow-[0_16px_32px_rgba(11,42,99,0.35)] active:translate-y-0.5">
           {/* Discarding Card (previous revealed card swipes out to the right) */}
           {discardingCard && (
             <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none animate-card-slide-out">
@@ -265,19 +293,20 @@ export const GachaPage: React.FC<GachaPageProps> = ({
               card={currentCard}
               index={activeIndex}
               onReveal={() => handleRevealCurrent()}
+              onNextCard={remainingInDeck > 0 ? handleNextCard : undefined}
               size="lg"
             />
           )}
         </div>
 
-        {/* Action Controls directly below active card */}
-        <div className="relative z-30 mt-6 flex items-center gap-3">
+        {/* Action Controls clearly positioned below the deck */}
+        <div className="relative z-30 mt-6 sm:mt-8 flex items-center justify-center gap-3">
           {!currentCard?.revealed ? (
             <GameButton
               variant="primary"
               size="lg"
               onClick={handleRevealCurrent}
-              className="py-3 px-8 text-lg shadow-[0_5px_0_#0B2A63]"
+              className="py-3 px-8 sm:px-10 text-lg sm:text-xl shadow-[0_5px_0_#0B2A63] hover:scale-102 active:scale-98 transition-transform"
             >
               TAP TO REVEAL
             </GameButton>
@@ -287,12 +316,12 @@ export const GachaPage: React.FC<GachaPageProps> = ({
               size="lg"
               onClick={handleNextCard}
               icon={<ArrowRight className="w-5 h-5 text-[#0B2A63]" />}
-              className="py-3 px-8 text-lg shadow-[0_5px_0_#0B2A63]"
+              className="py-3 px-8 sm:px-10 text-lg sm:text-xl shadow-[0_5px_0_#0B2A63] hover:scale-102 active:scale-98 transition-transform"
             >
               NEXT CARD ({remainingInDeck} LEFT)
             </GameButton>
           ) : (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] text-[#0B2A63] font-display font-black text-sm">
+            <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white border-[3px] border-[#0B2A63] shadow-[0_4px_0_#0B2A63] text-[#0B2A63] font-display font-black text-sm sm:text-base">
               <CheckCircle className="w-5 h-5 text-emerald-500" />
               <span>ALL 10 CARDS REVEALED!</span>
             </div>
@@ -322,8 +351,8 @@ export const GachaPage: React.FC<GachaPageProps> = ({
                 ? card.rarity === 'EPIC'
                   ? 'border-purple-500 bg-purple-50'
                   : card.rarity === 'RARE'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-emerald-500 bg-emerald-50'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-emerald-500 bg-emerald-50'
                 : 'border-slate-300 bg-slate-100';
 
               return (
@@ -331,9 +360,8 @@ export const GachaPage: React.FC<GachaPageProps> = ({
                   key={card.id}
                   type="button"
                   onClick={() => handleSelectCard(idx)}
-                  className={`flex flex-col items-center justify-between p-1.5 rounded-xl border-[2.5px] border-[#0B2A63] shadow-[0_2.5px_0_#0B2A63] transition-all cursor-pointer aspect-[3/4] ${
-                    isActive ? 'ring-4 ring-[#FFD52E] scale-105 z-10' : 'hover:scale-102'
-                  } ${rarityBorder}`}
+                  className={`flex flex-col items-center justify-between p-1.5 rounded-xl border-[2.5px] border-[#0B2A63] shadow-[0_2.5px_0_#0B2A63] transition-all cursor-pointer aspect-[3/4] ${isActive ? 'ring-4 ring-[#FFD52E] scale-105 z-10' : 'hover:scale-102'
+                    } ${rarityBorder}`}
                   title={`Card #${idx + 1}: ${isRevealed ? card.optionName : 'Hidden'}`}
                 >
                   <span className="text-[10px] font-black text-[#0B2A63]">

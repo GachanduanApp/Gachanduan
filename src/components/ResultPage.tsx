@@ -161,8 +161,8 @@ export const ResultPage: React.FC<ResultPageProps> = ({
               <div
                 key={opt.id}
                 className={`flex items-center justify-between p-3 rounded-2xl border-[2.5px] border-[#0B2A63] transition-all ${isWinner
-                    ? 'bg-gradient-to-r from-[#FFF9D6] to-[#FFECA0] shadow-[0_3px_0_#0B2A63] scale-[1.01]'
-                    : 'bg-[#F0F6FF]'
+                  ? 'bg-gradient-to-r from-[#FFF9D6] to-[#FFECA0] shadow-[0_3px_0_#0B2A63] scale-[1.01]'
+                  : 'bg-[#F0F6FF]'
                   }`}
               >
                 <div className="flex items-center gap-2 max-w-[40%]">

@@ -51,29 +51,6 @@ export const PageBackground: React.FC = () => {
           className="w-full h-auto drop-shadow-md select-none"
         />
       </div>
-
-      {/* 4. Decorative Floating Ambient Cards (At far edges, low opacity, tilted) */}
-      <div className="hidden lg:block absolute top-1/4 left-6 w-20 h-28 opacity-25 -rotate-12 animate-float-subtle">
-        <img
-          src="/assets/commonBack.png"
-          alt=""
-          className="w-full h-full object-contain drop-shadow-lg select-none"
-        />
-      </div>
-      <div className="hidden lg:block absolute top-1/3 right-8 w-22 h-30 opacity-25 rotate-12 animate-float-subtle" style={{ animationDelay: '1.5s' }}>
-        <img
-          src="/assets/rareBack.png"
-          alt=""
-          className="w-full h-full object-contain drop-shadow-lg select-none"
-        />
-      </div>
-      <div className="hidden xl:block absolute bottom-1/4 left-10 w-24 h-32 opacity-20 rotate-6 animate-float-subtle" style={{ animationDelay: '2.5s' }}>
-        <img
-          src="/assets/epicBack.png"
-          alt=""
-          className="w-full h-full object-contain drop-shadow-lg select-none"
-        />
-      </div>
     </div>
   );
 };

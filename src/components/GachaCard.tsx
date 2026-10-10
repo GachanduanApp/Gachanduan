@@ -6,6 +6,7 @@ interface GachaCardProps {
   card: GachaCardData;
   index: number;
   onReveal?: (id: string) => void;
+  onNextCard?: () => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   isFlipped?: boolean; // override for animation control if needed
@@ -16,6 +17,7 @@ export const GachaCard: React.FC<GachaCardProps> = ({
   card,
   index,
   onReveal,
+  onNextCard,
   disabled = false,
   size = 'lg',
   isFlipped,
@@ -49,7 +51,7 @@ export const GachaCard: React.FC<GachaCardProps> = ({
           frontImg: '/assets/epicFront.png',
           backImg: '/assets/epicBack.png',
           color: '#C026D3',
-          glowClass: 'drop-shadow-[0_0_30px_rgba(217,70,239,0.7)] animate-pulse',
+          glowClass: 'drop-shadow-[0_0_30px_rgba(217,70,239,0.7)]',
           voteText: '+3 VOTES',
           badgeBg: 'bg-gradient-to-r from-[#D946EF] to-[#9333EA] text-white',
         };
@@ -68,9 +70,13 @@ export const GachaCard: React.FC<GachaCardProps> = ({
   const currentTheme = getAssets(card.rarity);
 
   const handleClick = (e: React.MouseEvent) => {
-    if (disabled || card.revealed) return;
-    if (onReveal) {
-      onReveal(card.id);
+    if (disabled) return;
+    if (!card.revealed) {
+      if (onReveal) {
+        onReveal(card.id);
+      }
+    } else if (onNextCard) {
+      onNextCard();
     }
   };
 
@@ -81,13 +87,15 @@ export const GachaCard: React.FC<GachaCardProps> = ({
     lg: 'w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px]',
   };
 
+  const isClickable = !disabled && ((!card.revealed && !!onReveal) || (card.revealed && !!onNextCard));
+
   return (
     <div
       onClick={handleClick}
-      role={onReveal && !card.revealed ? 'button' : 'figure'}
-      tabIndex={onReveal && !card.revealed ? 0 : -1}
+      role={isClickable ? 'button' : 'figure'}
+      tabIndex={isClickable ? 0 : -1}
       aria-label={`${card.optionName || 'Hidden card'} (${card.revealed ? card.rarity : 'Unrevealed'})`}
-      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${!card.revealed && !disabled && onReveal
+      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${isClickable
           ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
           : 'cursor-default'
         } ${className}`}

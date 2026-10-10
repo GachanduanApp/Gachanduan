@@ -24,28 +24,26 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 rounded-2xl bg-[#F0F6FF] text-[#0B2A63] border-[2.5px] border-[#0B2A63] shadow-[0_2.5px_0_#0B2A63] flex items-center justify-center hover:bg-slate-100 active:translate-y-[2px] transition-all cursor-pointer"
+          className="absolute top-5 right-5 w-10 h-10 rounded-2xl bg-[#F0F6FF] text-[#0B2A63] border-[2.5px] border-[#0B2A63] shadow-[0_2.5px_0_#0B2A63] flex items-center justify-center hover:bg-slate-100 active:translate-y-[2px] transition-all cursor-pointer z-10"
           title="Close"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1.5 text-xs font-black tracking-wider text-[#168CF5] uppercase">
-          <span>Local Session Log</span>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-3 pr-12">
           <h2 className="font-display font-black text-2xl sm:text-3xl text-[#0B2A63]">
             Decision History
           </h2>
           {history.length > 0 && (
-            <button
-              onClick={onClearHistory}
-              className="text-xs font-black text-rose-600 hover:text-rose-700 flex items-center gap-1 hover:underline cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear Log</span>
-            </button>
+            <div className="mt-1">
+              <button
+                onClick={onClearHistory}
+                className="text-xs font-black text-rose-600 hover:text-rose-700 flex items-center gap-1 hover:underline cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Clear Log</span>
+              </button>
+            </div>
           )}
         </div>
 
