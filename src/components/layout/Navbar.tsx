@@ -46,11 +46,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className={`w-full sticky top-3 z-40 px-3 sm:px-6 transition-all duration-300 ease-in-out ${
-        isVisible
-          ? 'opacity-100 translate-y-0 pointer-events-auto'
-          : 'opacity-0 -translate-y-6 pointer-events-none'
-      }`}
+      className={`w-full sticky top-3 z-40 px-3 sm:px-6 transition-all duration-300 ease-in-out ${isVisible
+        ? 'opacity-100 translate-y-0 pointer-events-auto'
+        : 'opacity-0 -translate-y-6 pointer-events-none'
+        }`}
     >
       <div className="max-w-5xl mx-auto">
         {/* Main Navbar Pill */}

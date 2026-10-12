@@ -50,18 +50,24 @@
 
 /* Floating animation for clouds and decorative elements */
 @keyframes cloud-float-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0) translateY(0);
   }
+
   50% {
     transform: translateX(12px) translateY(-8px);
   }
 }
 
 @keyframes cloud-float-reverse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0) translateY(0);
   }
+
   50% {
     transform: translateX(-15px) translateY(-6px);
   }
@@ -76,9 +82,12 @@
 }
 
 @keyframes float-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
+
   50% {
     transform: translateY(-6px) rotate(1.5deg);
   }
@@ -111,25 +120,25 @@
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
 
 .animate-rainbow {
-  background: linear-gradient(
-    90deg,
-    #ff0055,
-    #ff7700,
-    #ffdd00,
-    #00ff66,
-    #00ccff,
-    #7700ff,
-    #ff0055
-  );
+  background: linear-gradient(90deg,
+      #ff0055,
+      #ff7700,
+      #ffdd00,
+      #00ff66,
+      #00ccff,
+      #7700ff,
+      #ff0055);
   background-size: 300% 300%;
   animation: rainbow-border 4s ease infinite;
 }
@@ -152,10 +161,13 @@
 
 /* Epic Card Animations: Sebelum & Sesudah Klik */
 @keyframes epic-card-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 15px 1px rgba(192, 132, 252, 0.5), 0 0 28px 2px rgba(168, 85, 247, 0.3);
     transform: translateY(0);
   }
+
   50% {
     box-shadow: 0 0 26px 4px rgba(192, 132, 252, 0.8), 0 0 44px 6px rgba(168, 85, 247, 0.45);
     transform: translateY(-5px);
@@ -179,13 +191,16 @@
     transform: scale(0.25) translateY(70px);
     opacity: 0;
   }
+
   60% {
     transform: scale(1.14) translateY(-12px);
     opacity: 1;
   }
+
   80% {
     transform: scale(0.96) translateY(2px);
   }
+
   100% {
     transform: scale(1) translateY(0);
     opacity: 1;
@@ -201,6 +216,7 @@
     transform: scale(0.3);
     opacity: 0.95;
   }
+
   100% {
     transform: scale(2.4);
     opacity: 0;
@@ -212,9 +228,12 @@
 }
 
 @keyframes epic-idle-float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -224,20 +243,27 @@
   animation: epic-idle-float 3s ease-in-out infinite;
 }
 
-/* TCG Card Stack Animations */
-@keyframes card-slide-out {
+/* TCG Card Stack Animations - Swap animation to the left */
+@keyframes card-slide-out-left {
   0% {
-    transform: translateX(0) rotate(0deg) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
     opacity: 1;
   }
+
+  25% {
+    transform: translate3d(-24px, -6px, 0) rotate(-3deg) scale(1.02);
+    opacity: 0.98;
+  }
+
   100% {
-    transform: translateX(115%) rotate(14deg) scale(0.88);
+    transform: translate3d(-140%, -18px, 0) rotate(-14deg) scale(0.86);
     opacity: 0;
   }
 }
 
-.animate-card-slide-out {
-  animation: card-slide-out 0.26s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.animate-card-slide-out,
+.animate-card-slide-out-left {
+  animation: card-slide-out-left 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes card-slide-in {
@@ -245,6 +271,7 @@
     transform: translateY(14px) scale(0.94);
     opacity: 0.7;
   }
+
   100% {
     transform: translateY(0) scale(1);
     opacity: 1;
@@ -260,6 +287,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -270,6 +298,7 @@
     opacity: 0;
     transform: scale(0.92) translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -283,4 +312,3 @@
 .animate-modal-enter {
   animation: modal-content-enter 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-

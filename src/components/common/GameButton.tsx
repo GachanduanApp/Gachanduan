@@ -7,6 +7,7 @@ interface GameButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   size?: 'sm' | 'md' | 'lg' | 'xl';
   icon?: React.ReactNode;
   children: React.ReactNode;
+  withGlare?: boolean;
 }
 
 export const GameButton: React.FC<GameButtonProps> = ({
@@ -16,6 +17,7 @@ export const GameButton: React.FC<GameButtonProps> = ({
   children,
   className = '',
   disabled,
+  withGlare = false,
   ...props
 }) => {
   // Variant styles based on PDF 6.2 Button System
@@ -51,11 +53,19 @@ export const GameButton: React.FC<GameButtonProps> = ({
   return (
     <button
       disabled={disabled}
-      className={`inline-flex items-center justify-center select-none font-display transition-all duration-75 text-center leading-none ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${className}`}
+      className={`relative overflow-hidden group inline-flex items-center justify-center select-none font-display transition-all duration-75 text-center leading-none ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${className}`}
       {...props}
     >
-      {icon && <span className="shrink-0">{icon}</span>}
-      <span>{children}</span>
+      {withGlare && !disabled && (
+        <span
+          className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]"
+          aria-hidden="true"
+        >
+          <span className="absolute inset-y-0 -left-[120%] w-[60%] bg-gradient-to-r from-transparent via-white/45 to-transparent skew-x-[-25deg] transition-all duration-700 ease-out group-hover:left-[160%]" />
+        </span>
+      )}
+      {icon && <span className="relative z-10 shrink-0">{icon}</span>}
+      <span className="relative z-10">{children}</span>
     </button>
   );
 };

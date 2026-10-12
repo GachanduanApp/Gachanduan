@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { GachaCardData, Rarity } from '../types';
 import { Sparkles } from 'lucide-react';
 
@@ -24,6 +24,157 @@ export const GachaCard: React.FC<GachaCardProps> = ({
   className = '',
 }) => {
   const revealed = isFlipped !== undefined ? isFlipped : card.revealed;
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+  const isHoveredRef = useRef<boolean>(false);
+
+  // Dynamic glare background generator following cursor / phone tilt angle
+  const getGlareBackground = useCallback((xPct: string, yPct: string, rarity: Rarity) => {
+    const xNum = parseFloat(xPct);
+    const yNum = parseFloat(yPct);
+    const angle = Math.round((Math.atan2(yNum - 50, xNum - 50) * 180) / Math.PI + 90);
+
+    if (rarity === 'EPIC') {
+      return `radial-gradient(circle 280px at ${xPct}% ${yPct}%, rgba(255, 255, 255, 0.85) 0%, rgba(217, 70, 239, 0.38) 25%, rgba(147, 51, 234, 0.2) 50%, rgba(56, 189, 248, 0.15) 70%, transparent 85%), linear-gradient(${angle}deg, transparent 30%, rgba(255, 255, 255, 0.25) 50%, transparent 70%)`;
+    }
+    if (rarity === 'RARE') {
+      return `radial-gradient(circle 270px at ${xPct}% ${yPct}%, rgba(255, 255, 255, 0.85) 0%, rgba(56, 189, 248, 0.4) 28%, rgba(147, 197, 253, 0.18) 55%, transparent 80%), linear-gradient(${angle}deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%)`;
+    }
+    return `radial-gradient(circle 260px at ${xPct}% ${yPct}%, rgba(255, 255, 255, 0.8) 0%, rgba(40, 216, 107, 0.32) 30%, rgba(255, 255, 255, 0.1) 55%, transparent 75%), linear-gradient(${angle}deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%)`;
+  }, []);
+
+  const updateTiltAndGlare = useCallback((normX: number, normY: number, opacity: number = 1) => {
+    if (!tiltRef.current || !glareRef.current) return;
+
+    const clampedX = Math.max(-1, Math.min(1, normX));
+    const clampedY = Math.max(-1, Math.min(1, normY));
+
+    // Tilt directly towards cursor / tilt direction
+    const maxTilt = 14;
+    const rotX = -clampedY * maxTilt;
+    const rotY = clampedX * maxTilt;
+
+    tiltRef.current.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+
+    const glareX = ((clampedX + 1) * 50).toFixed(1);
+    const glareY = ((clampedY + 1) * 50).toFixed(1);
+
+    glareRef.current.style.opacity = `${opacity}`;
+    glareRef.current.style.background = getGlareBackground(glareX, glareY, card.rarity);
+  }, [card.rarity, getGlareBackground]);
+
+  const resetTiltAndGlare = useCallback(() => {
+    if (tiltRef.current) {
+      tiltRef.current.style.transition = 'transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      tiltRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    }
+    if (glareRef.current) {
+      glareRef.current.style.opacity = '0';
+    }
+  }, []);
+
+  // Desktop Mouse Handlers
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!revealed || size !== 'lg' || disabled || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - (rect.left + rect.width / 2);
+    const y = e.clientY - (rect.top + rect.height / 2);
+    const normX = x / (rect.width / 2);
+    const normY = y / (rect.height / 2);
+    updateTiltAndGlare(normX, normY, 1);
+  };
+
+  const handleMouseEnter = () => {
+    if (!revealed || size !== 'lg' || disabled) return;
+    isHoveredRef.current = true;
+    if (tiltRef.current) {
+      tiltRef.current.style.transition = 'transform 0.08s ease-out';
+    }
+  };
+
+  const handleMouseLeave = () => {
+    isHoveredRef.current = false;
+    resetTiltAndGlare();
+  };
+
+  // Mobile Touch Handlers
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!revealed || size !== 'lg' || disabled || !cardRef.current || !e.touches[0]) return;
+    const touch = e.touches[0];
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = touch.clientX - (rect.left + rect.width / 2);
+    const y = touch.clientY - (rect.top + rect.height / 2);
+    const normX = x / (rect.width / 2);
+    const normY = y / (rect.height / 2);
+    updateTiltAndGlare(normX, normY, 0.9);
+  };
+
+  const handleTouchEnd = () => {
+    resetTiltAndGlare();
+  };
+
+  // Mobile Gyroscope System (tilting the phone tilts the card and shifts glare)
+  useEffect(() => {
+    if (!revealed || size !== 'lg' || disabled) {
+      resetTiltAndGlare();
+      return;
+    }
+
+    let rafId: number | null = null;
+    let targetNormX = 0;
+    let targetNormY = 0;
+    let currentNormX = 0;
+    let currentNormY = 0;
+    let hasGyroData = false;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      // Prioritize direct mouse hovering if on desktop
+      if (isHoveredRef.current) return;
+      if (e.gamma === null || e.beta === null) return;
+      hasGyroData = true;
+
+      // Natural holding angle on phone is ~45 degrees
+      const naturalBeta = 45;
+      const maxRange = 22; // Responsive tilt sensitivity
+
+      const gamma = Math.max(-maxRange, Math.min(maxRange, e.gamma));
+      const betaDiff = Math.max(-maxRange, Math.min(maxRange, e.beta - naturalBeta));
+
+      targetNormX = gamma / maxRange;
+      targetNormY = -betaDiff / maxRange;
+
+      if (!rafId) {
+        rafId = requestAnimationFrame(stepGyro);
+      }
+    };
+
+    const stepGyro = () => {
+      if (!hasGyroData) return;
+      currentNormX += (targetNormX - currentNormX) * 0.18;
+      currentNormY += (targetNormY - currentNormY) * 0.18;
+
+      updateTiltAndGlare(currentNormX, currentNormY, 0.85);
+
+      if (
+        Math.abs(targetNormX - currentNormX) > 0.005 ||
+        Math.abs(targetNormY - currentNormY) > 0.005
+      ) {
+        rafId = requestAnimationFrame(stepGyro);
+      } else {
+        rafId = null;
+      }
+    };
+
+    window.addEventListener('deviceorientation', handleOrientation, true);
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation, true);
+      if (rafId) cancelAnimationFrame(rafId);
+      resetTiltAndGlare();
+    };
+  }, [revealed, size, disabled, updateTiltAndGlare, resetTiltAndGlare]);
 
   // Assets mapping according to Section 10.1 of PDF
   const getAssets = (rarity: Rarity) => {
@@ -71,6 +222,16 @@ export const GachaCard: React.FC<GachaCardProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     if (disabled) return;
+
+    // Request device orientation permission for iOS 13+ devices
+    if (
+      typeof window !== 'undefined' &&
+      typeof (window as any).DeviceOrientationEvent !== 'undefined' &&
+      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+    ) {
+      (DeviceOrientationEvent as any).requestPermission().catch(() => {});
+    }
+
     if (!card.revealed) {
       if (onReveal) {
         onReveal(card.id);
@@ -91,55 +252,83 @@ export const GachaCard: React.FC<GachaCardProps> = ({
 
   return (
     <div
+      ref={cardRef}
       onClick={handleClick}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       role={isClickable ? 'button' : 'figure'}
       tabIndex={isClickable ? 0 : -1}
       aria-label={`${card.optionName || 'Hidden card'} (${card.revealed ? card.rarity : 'Unrevealed'})`}
-      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${isClickable
-          ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
+      className={`relative perspective-1000 select-none transition-all duration-200 ${sizeClasses[size]} ${
+        isClickable
+          ? revealed && size === 'lg'
+            ? 'cursor-pointer'
+            : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'
           : 'cursor-default'
-        } ${className}`}
+      } ${className}`}
     >
+      {/* 3D Tilt Wrapper */}
       <div
-        className={`relative w-full h-full duration-500 transform-style-3d transition-transform ease-out ${revealed ? 'rotate-y-180' : ''
-          }`}
+        ref={tiltRef}
+        className="relative w-full h-full transform-style-3d will-change-transform"
+        style={{ transformStyle: 'preserve-3d' }}
       >
-        {/* ================= CARD BACK (Face Down State) ================= */}
-        {/* Invisible/transparent container with drop-shadow naturally following card PNG edges */}
         <div
-          className="absolute inset-0 w-full h-full backface-hidden bg-transparent drop-shadow-[0_12px_24px_rgba(11,42,99,0.5)]"
-          style={{ transform: 'translateZ(1px)' }}
+          className={`relative w-full h-full duration-500 transform-style-3d transition-transform ease-out ${
+            revealed ? 'rotate-y-180' : ''
+          }`}
         >
-          {/* Card Back Graphic Asset */}
-          <img
-            src={currentTheme.backImg}
-            alt="Card Back"
-            className="w-full h-full object-contain select-none pointer-events-none"
-          />
+          {/* ================= CARD BACK (Face Down State) ================= */}
+          {/* Invisible/transparent container with drop-shadow naturally following card PNG edges */}
+          <div
+            className="absolute inset-0 w-full h-full backface-hidden bg-transparent drop-shadow-[0_12px_24px_rgba(11,42,99,0.5)]"
+            style={{ transform: 'translateZ(1px)' }}
+          >
+            {/* Card Back Graphic Asset */}
+            <img
+              src={currentTheme.backImg}
+              alt="Card Back"
+              className="w-full h-full object-contain select-none pointer-events-none"
+            />
 
-          {/* Card Number Badge in Back */}
-          <div className="absolute top-4 left-4 z-10 px-2.5 py-1 rounded-xl bg-[#0B2A63]/85 border-[2px] border-white/60 text-white font-display font-black text-xs shadow-md">
-            #{index + 1}
+            {/* Card Number Badge in Back */}
+            <div className="absolute top-4 left-4 z-10 px-2.5 py-1 rounded-xl bg-[#0B2A63]/85 border-[2px] border-white/60 text-white font-display font-black text-xs shadow-md">
+              #{index + 1}
+            </div>
+
+            {/* Gacha Logo or hint on back */}
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full bg-white/95 border-[2px] border-[#0B2A63] text-[#0B2A63] font-display font-black text-[11px] shadow-sm whitespace-nowrap">
+              TAP TO REVEAL
+            </div>
           </div>
 
-          {/* Gacha Logo or hint on back */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full bg-white/95 border-[2px] border-[#0B2A63] text-[#0B2A63] font-display font-black text-[11px] shadow-sm whitespace-nowrap">
-            TAP TO REVEAL
-          </div>
-        </div>
+          {/* ================= CARD FRONT (Revealed State) ================= */}
+          {/* Invisible/transparent container with glow and drop-shadow */}
+          <div
+            className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-transparent drop-shadow-[0_12px_24px_rgba(11,42,99,0.5)] ${currentTheme.glowClass}`}
+            style={{ transform: 'rotateY(180deg) translateZ(1px)' }}
+          >
+            {/* Card Front Graphic Frame Asset */}
+            <img
+              src={currentTheme.frontImg}
+              alt={`${card.rarity} Card Frame`}
+              className="w-full h-full object-contain select-none pointer-events-none absolute inset-0 z-0"
+            />
 
-        {/* ================= CARD FRONT (Revealed State) ================= */}
-        {/* Invisible/transparent container with glow and drop-shadow */}
-        <div
-          className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-transparent drop-shadow-[0_12px_24px_rgba(11,42,99,0.5)] ${currentTheme.glowClass}`}
-          style={{ transform: 'rotateY(180deg) translateZ(1px)' }}
-        >
-          {/* Card Front Graphic Frame Asset */}
-          <img
-            src={currentTheme.frontImg}
-            alt={`${card.rarity} Card Frame`}
-            className="w-full h-full object-contain select-none pointer-events-none absolute inset-0 z-0"
-          />
+            {/* Dynamic Interactive Glare Layer following cursor / gyro */}
+            {size === 'lg' && (
+              <div
+                ref={glareRef}
+                className="absolute inset-0 z-30 pointer-events-none rounded-[28px] sm:rounded-[34px] overflow-hidden transition-opacity duration-300"
+                style={{
+                  opacity: 0,
+                  mixBlendMode: 'overlay',
+                }}
+              />
+            )}
 
           {/* Dynamic Content Layer strictly rendered in HTML inside safe card window */}
           <div
@@ -206,5 +395,6 @@ export const GachaCard: React.FC<GachaCardProps> = ({
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

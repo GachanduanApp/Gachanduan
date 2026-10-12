@@ -62,25 +62,23 @@ export const GachaPage: React.FC<GachaPageProps> = ({
   const currentCard = cards[activeIndex] || cards[0];
   const remainingInDeck = Math.max(0, cards.length - activeIndex - 1);
 
-  // Cards remaining in deck behind active card (showing 3–4 background cards)
+  // Cards remaining in deck behind active card (showing up to 4 receding background cards like reference)
   const remainingCards = cards.slice(activeIndex + 1);
-  const fanCards = remainingCards.slice(0, 4);
+  const depthCards = remainingCards.slice(0, 4);
 
-  // Symmetrical deck arrangements:
-  // Desktop: controlled, slightly fanned stack with balanced alternating pairs
-  // Mobile: compact, nearly straight stack to conserve space and eliminate horizontal overflow
-  const fanConfigs = isDesktop
+  // Depth Carousel Rail configurations (Cards recede into depth to the right on a 3D rail)
+  const depthConfigs = isDesktop
     ? [
-      { x: 6, y: -4, rot: 1.8 },
-      { x: -6, y: -7, rot: -1.8 },
-      { x: 10, y: -10, rot: 2.8 },
-      { x: -10, y: -13, rot: -2.8 },
+      { x: 48, scale: 0.92, brightness: 0.86, contrast: 0.98, opacity: 1 },
+      { x: 92, scale: 0.84, brightness: 0.72, contrast: 0.96, opacity: 0.95 },
+      { x: 130, scale: 0.77, brightness: 0.58, contrast: 0.94, opacity: 0.88 },
+      { x: 162, scale: 0.70, brightness: 0.45, contrast: 0.92, opacity: 0.80 },
     ]
     : [
-      { x: 3, y: -3, rot: 0.8 },
-      { x: -3, y: -5, rot: -0.8 },
-      { x: 4, y: -7, rot: 1.2 },
-      { x: -4, y: -9, rot: -1.2 },
+      { x: 26, scale: 0.92, brightness: 0.86, contrast: 0.98, opacity: 1 },
+      { x: 48, scale: 0.84, brightness: 0.72, contrast: 0.96, opacity: 0.95 },
+      { x: 66, scale: 0.77, brightness: 0.58, contrast: 0.94, opacity: 0.88 },
+      { x: 80, scale: 0.70, brightness: 0.45, contrast: 0.92, opacity: 0.80 },
     ];
 
   // Reveal the current active card
@@ -131,7 +129,7 @@ export const GachaPage: React.FC<GachaPageProps> = ({
 
     setTimeout(() => {
       setDiscardingCard(null);
-    }, 270);
+    }, 320);
   };
 
   // Jump to specific card in collection
@@ -148,17 +146,17 @@ export const GachaPage: React.FC<GachaPageProps> = ({
       <div className="w-full mb-6">
         <Panel variant="white" className="p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-3">
-            <div>
-              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-400 block">
+            <div className="text-center sm:text-left min-w-0">
+              {/* <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-400 block">
                 GACHA DECISION PACK
-              </span>
+              </span> */}
               <h2 className="font-display font-black text-xl sm:text-2xl text-[#0B2A63] truncate max-w-md">
                 {question || 'Where should we eat?'}
               </h2>
             </div>
 
             {/* Top Control Buttons */}
-            <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+            <div className="flex items-center gap-2 self-stretch sm:self-auto justify-center sm:justify-end">
               {!isAllRevealed && (
                 <GameButton
                   variant="cyan"
@@ -239,68 +237,73 @@ export const GachaPage: React.FC<GachaPageProps> = ({
         </div>
       </div>
 
-      {/* 3. Central Card Stage (Section 8.2 of PDF) */}
-      <div className="relative w-full max-w-sm flex flex-col items-center justify-center my-4 sm:my-6 min-h-[440px] sm:min-h-[500px]">
-        {/* Fan / Stack of cards behind active card (Clean, Symmetrical, Solid - No Ghosting) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          {fanCards.map((card, i) => {
-            const config = fanConfigs[i] || { x: 0, y: 0, rot: 0 };
-            return (
-              <div
-                key={card.id}
-                className="absolute w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px] bg-transparent drop-shadow-[0_8px_16px_rgba(11,42,99,0.22)] transition-transform duration-300 pointer-events-none select-none"
-                style={{
-                  transform: `translate3d(${config.x}px, ${config.y}px, 0) rotate(${config.rot}deg)`,
-                  zIndex: 10 - i,
-                  opacity: 1, // Solid opacity eliminates ghosting
-                }}
-              >
-                <img
-                  src={
-                    card.rarity === 'EPIC'
-                      ? '/assets/epicBack.png'
-                      : card.rarity === 'RARE'
-                        ? '/assets/rareBack.png'
-                        : '/assets/commonBack.png'
-                  }
-                  alt=""
-                  className="w-full h-full object-contain select-none pointer-events-none"
+      {/* 3. Central Card Stage (Depth Carousel on 3D rail receding to the right) */}
+      <div className="relative w-full max-w-sm flex flex-col items-center my-4 sm:my-6">
+        {/* Dedicated Card Stack Frame (Exact card dimensions; isolates cards completely from button flow) */}
+        <div className="relative w-64 sm:w-72 md:w-80 h-[384px] sm:h-[432px] md:h-[480px]">
+          {/* Depth Carousel: Cards recede into depth on a 3D rail to the right, perfectly aligned at baseline */}
+          <div className="absolute inset-0 pointer-events-none">
+            {depthCards.map((card, i) => {
+              const config = depthConfigs[i] || { x: 0, scale: 1, brightness: 1, contrast: 1, opacity: 1 };
+              return (
+                <div
+                  key={card.id}
+                  className="absolute inset-0 bg-transparent transition-all duration-300 ease-out pointer-events-none select-none"
+                  style={{
+                    transform: `translate3d(${config.x}px, 0, 0) scale(${config.scale})`,
+                    transformOrigin: 'bottom center',
+                    zIndex: 15 - i,
+                    filter: `brightness(${config.brightness}) contrast(${config.contrast}) drop-shadow(0 10px 20px rgba(11,42,99,0.35))`,
+                    opacity: config.opacity,
+                  }}
+                >
+                  <img
+                    src={
+                      card.rarity === 'EPIC'
+                        ? '/assets/epicBack.png'
+                        : card.rarity === 'RARE'
+                          ? '/assets/rareBack.png'
+                          : '/assets/commonBack.png'
+                    }
+                    alt=""
+                    className="w-full h-full object-contain select-none pointer-events-none"
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Current Active Playable Card & Discard Layer */}
+          <div className="absolute inset-0 z-20 flex items-center justify-center transition-all duration-200 ease-out hover:-translate-y-2 hover:drop-shadow-[0_16px_32px_rgba(11,42,99,0.35)] active:translate-y-0.5">
+            {/* Discarding Card (previous revealed card swipes out to the left) */}
+            {discardingCard && (
+              <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none animate-card-slide-out-left">
+                <GachaCard
+                  key={`discard-${discardingCard.card.id}`}
+                  card={discardingCard.card}
+                  index={discardingCard.index}
+                  size="lg"
+                  disabled
                 />
               </div>
-            );
-          })}
-        </div>
+            )}
 
-        {/* Current Active Playable Card & Discard Layer with subtle lift/bounce on interaction */}
-        <div className="relative z-20 flex items-center justify-center transition-all duration-200 ease-out hover:-translate-y-2 hover:drop-shadow-[0_16px_32px_rgba(11,42,99,0.35)] active:translate-y-0.5">
-          {/* Discarding Card (previous revealed card swipes out to the right) */}
-          {discardingCard && (
-            <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none animate-card-slide-out">
+            {/* Next Playable Card (Stationary on top of deck, face down, no un-flip) */}
+            {currentCard && (
               <GachaCard
-                key={`discard-${discardingCard.card.id}`}
-                card={discardingCard.card}
-                index={discardingCard.index}
+                key={currentCard.id}
+                card={currentCard}
+                index={activeIndex}
+                onReveal={() => handleRevealCurrent()}
+                onNextCard={remainingInDeck > 0 ? handleNextCard : undefined}
                 size="lg"
-                disabled
               />
-            </div>
-          )}
-
-          {/* Next Playable Card (Stationary on top of deck, face down, no un-flip) */}
-          {currentCard && (
-            <GachaCard
-              key={currentCard.id}
-              card={currentCard}
-              index={activeIndex}
-              onReveal={() => handleRevealCurrent()}
-              onNextCard={remainingInDeck > 0 ? handleNextCard : undefined}
-              size="lg"
-            />
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Action Controls clearly positioned below the deck */}
-        <div className="relative z-30 mt-6 sm:mt-8 flex items-center justify-center gap-3">
+        {/* Action Controls clearly positioned below the deck (aligned with center and Card Collection) */}
+        <div className="relative z-30 mt-6 sm:mt-8 flex items-center justify-center gap-3 w-full">
           {!currentCard?.revealed ? (
             <GameButton
               variant="primary"

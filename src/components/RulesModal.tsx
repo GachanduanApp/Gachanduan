@@ -27,7 +27,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         </div> */}
 
         <h2 className="font-display font-black text-2xl sm:text-3xl text-[#0B2A63] mb-3">
-          How GACHANDUAN Works
+          How it Works
         </h2>
 
         <p className="text-xs sm:text-sm font-semibold text-slate-600 mb-5 leading-relaxed">

@@ -170,9 +170,8 @@ export const RevealAllModal: React.FC<RevealAllModalProps> = ({
               return (
                 <div
                   key={card.id}
-                  className={`transition-transform duration-200 ${
-                    isCurrentlyFlipping ? 'scale-105 z-20' : ''
-                  }`}
+                  className={`transition-transform duration-200 ${isCurrentlyFlipping ? 'scale-105 z-20' : ''
+                    }`}
                 >
                   <GachaCard
                     card={card}

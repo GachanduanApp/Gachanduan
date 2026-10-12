@@ -112,16 +112,16 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
         </div>
 
         <p className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-wide mt-2 drop-shadow-[0_2px_4px_#0B2A63]">
-          Can’t decide? Let GACHANDUAN decide.
+          Too many choices? Roll for it.
         </p>
         <p className="text-xs sm:text-sm font-semibold text-blue-100 max-w-md mx-auto mt-1 opacity-90">
-          Add your options, roll the 10 gacha cards, and let luck make the decision!
+          Throw in your options, flip the cards, and see what wins.
         </p>
 
         {/* Quick Presets Bar */}
         <div className="mt-5 flex items-center justify-center flex-wrap gap-2">
           <span className="text-[11px] font-black uppercase tracking-wider text-blue-200 mr-1 drop-shadow-sm">
-            Quick Packs:
+            Quick Picks:
           </span>
           {PRESETS.map((preset) => (
             <button
@@ -142,11 +142,11 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="font-display font-black text-xl sm:text-2xl text-[#0B2A63] leading-none">
-              DECISION SETUP
-            </h2>
-            <p className="text-xs font-semibold text-slate-500 mt-1">
               What are we deciding today?
-            </p>
+            </h2>
+            {/* <p className="text-xs font-semibold text-slate-500 mt-1">
+              What are we deciding today?
+            </p> */}
           </div>
           <Badge variant="navy" size="md">
             {options.length} / 10 OPTIONS
@@ -254,6 +254,7 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
             size="xl"
             disabled={!isValidToRoll}
             onClick={onStartRoll}
+            withGlare
             icon={<Dices className="w-6 h-6 text-[#0B2A63]" />}
             className="w-full py-4 text-xl sm:text-2xl tracking-wider shadow-[0_6px_0_#0B2A63]"
           >
