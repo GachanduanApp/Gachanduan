@@ -4,6 +4,23 @@
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
+
+  /* iOS Safari / PWA: prevent browser from inflating font sizes and
+     ensure buttons don't get default OS appearance that misaligns text */
+  button, input, select, textarea {
+    -webkit-appearance: none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  button {
+    /* Prevent iOS Safari from using the system default button styles that
+       push text to the center baseline instead of flex-center */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
 }
 
 .font-display {

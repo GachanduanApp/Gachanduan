@@ -53,7 +53,8 @@ export const GameButton: React.FC<GameButtonProps> = ({
   return (
     <button
       disabled={disabled}
-      className={`relative overflow-hidden group inline-flex items-center justify-center select-none font-display transition-all duration-75 text-center leading-none ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${className}`}
+      className={`relative overflow-hidden group inline-flex items-center justify-center select-none font-display transition-all duration-75 text-center leading-none box-border ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${className}`}
+      style={{ WebkitAppearance: 'none', WebkitTextSizeAdjust: '100%' }}
       {...props}
     >
       {withGlare && !disabled && (
@@ -64,8 +65,14 @@ export const GameButton: React.FC<GameButtonProps> = ({
           <span className="absolute inset-y-0 -left-[120%] w-[60%] bg-gradient-to-r from-transparent via-white/45 to-transparent skew-x-[-25deg] transition-all duration-700 ease-out group-hover:left-[160%]" />
         </span>
       )}
-      {icon && <span className="relative z-10 shrink-0">{icon}</span>}
-      <span className="relative z-10">{children}</span>
+      {icon && (
+        <span className="relative z-10 shrink-0 flex items-center justify-center" style={{ lineHeight: 1 }}>
+          {icon}
+        </span>
+      )}
+      <span className="relative z-10 flex items-center justify-center" style={{ lineHeight: 1 }}>
+        {children}
+      </span>
     </button>
   );
 };
