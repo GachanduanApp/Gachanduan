@@ -191,7 +191,7 @@ export const DecisionSetup: React.FC<DecisionSetupProps> = ({
               type="submit"
               variant="cyan"
               size="md"
-              icon={<Plus className="w-4 h-4 text-[#0B2A63]" />}
+              // icon={<Plus className="w-4 h-4 text-[#0B2A63]" />}
               className="whitespace-nowrap"
             >
               Add
